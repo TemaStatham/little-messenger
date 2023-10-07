@@ -1,0 +1,97 @@
+.login {
+  height: 80%;
+  width: 100%;
+  background-color: rgb(255, 255, 255);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-left: auto;
+  margin-right: auto;
+
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 5px 5px 5px 5px rgb(150, 149, 149);
+}
+
+.login__form {
+  width: 90%;
+  height: 90%;
+
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.login_tittle {
+  font-size: 30px;
+
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form__element {
+  margin-left: auto;
+  margin-right: auto;
+
+  width: 90%;
+  height: 30%;
+
+  border-radius: 20px;
+
+  margin: 10px 0px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: none;
+}
+
+.element__email {
+  border-width: 0.5px 1px 1px;
+  border-color: #ffffff;
+  width: 90%;
+  height: 10%;
+  background-color: #ffffff;
+
+  font-size: 35px;
+
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.element__password {
+  border-width: 0.5px 1px 1px;
+  border-color: #ffffff;
+  background-color: #ffffff;
+  width: 90%;
+  height: 10%;
+
+  font-size: 35px;
+
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.element__button {
+  width: 60%;
+  height: 60px;
+
+  margin-top: 5%;
+
+  border-radius: 10px;
+  background-color: #0047ff;
+  border-color: rgb(159, 159, 159);
+  border-width: 0.5px 1px 1.5px;
+  color: aliceblue;
+
+  font-size: 25px;
+}

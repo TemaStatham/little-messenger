@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap');
+
+.auth__сontainer {
+  font-family: 'Montserrat';
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background-image: url('../../assets/auth/backgroundImage.svg');
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: rgb(66, 66, 66);
+}
+
+.сontainer__сomponent {
+  width: 85%;
+  height: 90%;
+
+  margin: 0;
+
+  background-image: url('../../assets/auth/backgroundImage.svg');
+  background-size: cover;
+
+  box-shadow: 5px 5px 5px 5px rgb(150, 149, 149);
+
+  border-radius: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.component__element {
+  height: 90%;
+  width: 40%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center-around;
+}
+
+.element__tittle {
+  height: 50%;
+  width: 100%;
+  font-size: 3em;
+}
+
+.element__description {
+  height: 25%;
+  width: 100%;
+  font-size: 25px;
+}
+
+.element__registration_button {
+  margin-left: 10%;
+  margin-right: auto;
+}
+
+.registration_button {
+  width: 250px;
+  height: 50px;
+  background-color: #0047ff;
+
+  border-radius: 10px;
+  border-color: rgb(159, 159, 159);
+  border-width: 0.5px 1px 1.5px;
+
+  color: aliceblue;
+
+  font-size: 15px;
+}
+
+.element_login {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
