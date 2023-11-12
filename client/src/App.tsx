@@ -1,8 +1,12 @@
 import './App.css';
-import { Auth } from './api/auth/Auth';
+import { Chat } from './api/chat/Chat';
 
 function App() {
-  return <Auth />;
+  return (
+    <div className="app__container">
+      <Chat />
+    </div>
+  );
 }
 
 export default App;

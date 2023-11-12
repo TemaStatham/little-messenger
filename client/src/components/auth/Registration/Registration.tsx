@@ -2,7 +2,8 @@ import styles from './Registration.module.css';
 import { useState } from 'react';
 
 type RegistrationProps = {
-  setReg: React.Dispatch<React.SetStateAction<boolean>>;
+  //setReg: React.Dispatch<React.SetStateAction<boolean>>;
+  setReg: (event: boolean) => void;
 };
 
 export const Registration = (props: RegistrationProps) => {
@@ -12,12 +13,13 @@ export const Registration = (props: RegistrationProps) => {
   const [confirmPass, setConfirmPass] = useState('');
 
   return (
-    <div
-      className={styles.registration}
-      onClick={() => {
-        props.setReg(false);
-      }}
-    >
+    <div className={styles.registration}>
+      <div
+        className={styles.registration__hide_see_button}
+        onClick={() => {
+          props.setReg(false);
+        }}
+      ></div>
       <div className={styles.registration__form}>
         <div className={styles.registration__tittle}>Регистрация</div>
         <form className={styles.form}>

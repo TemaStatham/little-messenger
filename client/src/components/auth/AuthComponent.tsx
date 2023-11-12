@@ -1,18 +1,23 @@
 import styles from './AuthComponent.module.css';
-import { LogIn } from './LogIn/LogIn';
-import { Registration } from './Registration/Registration';
+import { LogIn } from './logIn/LogIn';
+import { Registration } from './registration/Registration';
 import { useState } from 'react';
 
-export function AuthComponent() {
+export const AuthComponent = () => {
   const [reg, setReg] = useState<boolean>(false);
   if (reg) {
     console.log('hello');
   } else {
     console.log('gooodbye');
   }
+
+  const handleChangeReg = (event: boolean) => {
+    setReg(event);
+  };
+
   return (
     <div className={styles.auth__сontainer}>
-      {reg && <Registration setReg={setReg} />}
+      {reg && <Registration setReg={handleChangeReg} />}
       <div className={styles.сontainer__сomponent}>
         <div className={styles.component__element}>
           <div className={styles.element__tittle}>
@@ -41,4 +46,4 @@ export function AuthComponent() {
       </div>
     </div>
   );
-}
+};
