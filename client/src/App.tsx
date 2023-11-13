@@ -1,12 +1,16 @@
-import './App.css';
-import { Chat } from './api/chat/Chat';
+import { ChatComponent } from './components/chat/ChatComponent';
+import { AuthComponent } from './components/auth/AuthComponent';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="app__container">
-      <Chat />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<ChatComponent />} />
+        <Route path="/auth" element={<AuthComponent />} />
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;

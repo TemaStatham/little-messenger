@@ -3,7 +3,7 @@ import { LogIn } from './logIn/LogIn';
 import { Registration } from './registration/Registration';
 import { useState } from 'react';
 
-export const AuthComponent = () => {
+export const AuthComponent: React.FC = () => {
   const [reg, setReg] = useState<boolean>(false);
   if (reg) {
     console.log('hello');
