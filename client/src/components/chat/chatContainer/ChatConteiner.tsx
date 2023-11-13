@@ -1,6 +1,6 @@
 import styles from './ChatConteiner.module.css';
 import { Form } from './form/Form';
-import { OutgoingBlock } from './outgoing-block/OutgoingBlock';
+import { OutgoingBlock } from './outgoingBlock/OutgoingBlock';
 import { Messages } from './messages/Messagex';
 import { Header } from './header/Header';
 

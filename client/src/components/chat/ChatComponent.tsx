@@ -1,6 +1,6 @@
 import styles from './ChatComponent.module.css';
-import { SideBar } from './side-bar/SideBar';
-import { ChatConteiner } from './chat-container/ChatConteiner';
+import { SideBar } from './sideBar/SideBar';
+import { ChatConteiner } from './chatContainer/ChatConteiner';
 
 export const ChatComponent: React.FC = () => {
   return (
