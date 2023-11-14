@@ -1,16 +1,13 @@
 package main
 
 import (
-	"context"
 	"log"
 	"log/slog"
 	"os"
-	"os/signal"
 
 	"github.com/TemaStatham/Little-Messenger/config"
 	"github.com/TemaStatham/Little-Messenger/internal/handler"
 	"github.com/TemaStatham/Little-Messenger/internal/repository"
-	"github.com/TemaStatham/Little-Messenger/internal/server"
 	"github.com/TemaStatham/Little-Messenger/internal/services"
 )
 
@@ -73,15 +70,17 @@ func main() {
 	serv := services.NewService(repos)
 	handlers := handler.NewHandler(serv)
 
-	srv := new(server.Server)
-	if err := srv.Run(config.Port, handlers.InitRoutes()); err != nil {
-		logger.Error("error occured while running http server: %s", err)
-	}
+	router := handlers.InitRoutes()
+	router.Run()
+	// srv := new(server.Server)
+	// if err := srv.Run(config.Port, handlers.InitRoutes()); err != nil {
+	// 	logger.Error("error occured while running http server: %s", err)
+	// }
 
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, os.Interrupt)
-	<-signalChan
-	if err := srv.Shutdown(context.Background()); err != nil {
-		panic(err)
-	}
+	// signalChan := make(chan os.Signal, 1)
+	// signal.Notify(signalChan, os.Interrupt)
+	// <-signalChan
+	// if err := srv.Shutdown(context.Background()); err != nil {
+	// 	panic(err)
+	// }
 }
