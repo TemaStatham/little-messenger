@@ -1,8 +1,45 @@
 import styles from './Registration.module.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Endpoints } from '../../../Endpoints';
+
+const registrateUser = async (
+  name: string,
+  email: string,
+  password: string,
+) => {
+  try {
+    const response = await fetch(Endpoints.register, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        age: 25,
+        googleImage: 'https://example.com/image.jpg',
+        firstName: 'John',
+        lastName: 'Doe',
+        userName: name,
+        email: email,
+        password: password,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      //window.location.assign('http://localhost:3000');
+    } else {
+      const errorData = await response.json();
+      console.error('Ошибка при запросе на сервер:', errorData.message);
+    }
+  } catch (error) {
+    console.error('Произошла ошибка:', error);
+  }
+};
 
 type RegistrationProps = {
-  //setReg: React.Dispatch<React.SetStateAction<boolean>>;
   setReg: (event: boolean) => void;
 };
 
@@ -11,6 +48,27 @@ export const Registration = (props: RegistrationProps) => {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
+  const [isValidEmail, setIsValidEmail] = useState(true);
+  // const [errorMessage, setErrorMessage] = useState('');
+  const [pressed, setPressed] = useState(false);
+
+  useEffect(() => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setIsValidEmail(emailRegex.test(email));
+  }, [email]);
+
+  useEffect(() => {
+    if (isValidEmail && pressed) {
+      registrateUser(name, email, pass);
+    }
+    if (!isValidEmail) {
+      //setErrorMessage('Некорректный email');
+      console.log('Invalid email');
+    }
+    return () => {
+      setPressed(false);
+    };
+  }, [pressed]);
 
   return (
     <div className={styles.registration}>
@@ -63,7 +121,12 @@ export const Registration = (props: RegistrationProps) => {
               placeholder="password"
             />
           </div>
-          <button className={styles.form__button}>Зарегестрироваться</button>
+          <button
+            onClick={() => setPressed(true)}
+            className={styles.form__button}
+          >
+            Зарегестрироваться
+          </button>
         </form>
       </div>
     </div>

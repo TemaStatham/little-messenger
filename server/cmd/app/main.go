@@ -72,6 +72,7 @@ func main() {
 
 	router := handlers.InitRoutes()
 	router.Run()
+
 	// srv := new(server.Server)
 	// if err := srv.Run(config.Port, handlers.InitRoutes()); err != nil {
 	// 	logger.Error("error occured while running http server: %s", err)

@@ -1,5 +1,5 @@
-import { ChatComponent } from './components/chat/ChatComponent';
-import { AuthComponent } from './components/auth/AuthComponent';
+import { ChatComponent } from '../components/chat/ChatComponent';
+import { Auth } from './auth/Auth';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 const App: React.FC = () => {
@@ -7,7 +7,7 @@ const App: React.FC = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<ChatComponent />} />
-        <Route path="/auth" element={<AuthComponent />} />
+        <Route path="/auth" element={<Auth />} />
       </Routes>
     </BrowserRouter>
   );

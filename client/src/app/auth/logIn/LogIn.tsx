@@ -11,14 +11,16 @@ const loginUser = async (email: string, password: string) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email,
-        password,
+        email: email,
+        password: password,
       }),
     });
 
     if (response.ok) {
       const data = await response.json();
       console.log(data);
+      localStorage.setItem('token', data.token);
+      window.location.assign('http://localhost:3000');
     } else {
       const errorData = await response.json();
       console.error('Ошибка при запросе на сервер:', errorData.message);
@@ -36,7 +38,6 @@ export const LogIn = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    // Проверка валидности почты
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setIsValidEmail(emailRegex.test(email));
   }, [email]);

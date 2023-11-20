@@ -37,6 +37,7 @@ func NewPostgresDB(cfg Config) (*gorm.DB, error) {
 		models.Conversation{},
 		models.ConversationParticipant{},
 		models.Contacts{},
+		models.UserActivity{},
 	)
 
 	if err != nil {

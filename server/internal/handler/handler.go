@@ -18,17 +18,25 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.Default()
 
 	config := cors.DefaultConfig()
-    config.AllowOrigins = []string{"http://localhost:3000"} // Разрешенные домены
-    config.AllowMethods = []string{"GET", "POST", "OPTIONS"} // Разрешенные методы
+	config.AllowOrigins = []string{"http://localhost:3000"}
+	config.AllowMethods = []string{"GET", "POST", "OPTIONS"}
+	config.AllowHeaders = []string{"Authorization", "Content-Type"}
 
-    router.Use(cors.New(config))
+	router.Use(cors.New(config))
 
 	auth := router.Group("/auth")
 	{
-		auth.OPTIONS("/sign-in", h.optionsSignIn)
+		auth.OPTIONS("/sign-up", h.options)
+		auth.OPTIONS("/sign-in", h.options)
 		auth.POST("/sign-up", h.signUp)
 		auth.POST("/sign-in", h.signIn)
 	}
+
+	api := router.Group("/api")
+    {
+        api.OPTIONS("", h.options)
+        api.POST("", h.userIdentity)
+    }
 
 	return router
 }

@@ -1,15 +1,10 @@
-import styles from './AuthComponent.module.css';
+import styles from './Auth.module.css';
 import { LogIn } from './logIn/LogIn';
 import { Registration } from './registration/Registration';
 import { useState } from 'react';
 
-export const AuthComponent: React.FC = () => {
+export const Auth: React.FC = () => {
   const [reg, setReg] = useState<boolean>(false);
-  if (reg) {
-    console.log('hello');
-  } else {
-    console.log('gooodbye');
-  }
 
   const handleChangeReg = (event: boolean) => {
     setReg(event);

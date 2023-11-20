@@ -3,48 +3,55 @@ package handler
 import (
 	"net/http"
 
+	"github.com/TemaStatham/Little-Messenger/internal/models"
 	"github.com/gin-gonic/gin"
 )
 
-type SignInRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-func (h *Handler) optionsSignIn(c *gin.Context) {
-    c.Header("Access-Control-Allow-Methods", "POST")
-    c.Header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
-    c.Status(http.StatusOK)
+func (h *Handler) options(c *gin.Context) {
+	c.Header("Access-Control-Allow-Methods", "POST")
+	c.Header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
+	c.Status(http.StatusOK)
 }
 
 func (h *Handler) signUp(c *gin.Context) {
+	var input models.User
 
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
-        "message": "Успешный вход",
-	})
-}
-
-func (h *Handler) signIn(c *gin.Context) {
-
-	var request SignInRequest
-
-	// Попытка извлечь данные из JSON-тела запроса
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  "error",
-			"message": "Неверный формат данных",
-		})
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
-	// В request теперь содержатся данные из тела запроса
-	email := request.Email
-	password := request.Password
+	err := h.services.Authorization.CreateUser(&input)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"status" : "Успешная регистрация",
+	})
+}
 
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
-        "message": email + " " + password,
+type signInInput struct {
+	Email string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+func (h *Handler) signIn(c *gin.Context) {
+	var input signInInput
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	token, err := h.services.Authorization.GenerateToken(input.Email, input.Password)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"token": token,
 	})
 }

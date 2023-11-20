@@ -9,3 +9,10 @@ type RefreshSession struct {
 	ExpireAt     time.Time `json:"expire_at" gorm:"not null"`
 	IsBlocked    bool      `json:"is_blocked" gorm:"not null;default:false"`
 }
+
+type UserActivity struct {
+	ID                    uint      `json:"id" gorm:"primaryKey;not null"`
+	UserID                uint      `json:"user_id" gorm:"not null"`
+	User                  User      `json:"user" gorm:"foreignKey:UserID"`
+	LastActivityTimeStamp time.Time `json:"created_at" gorm:"not null"`
+}
