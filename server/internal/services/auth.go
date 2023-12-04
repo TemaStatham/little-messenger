@@ -30,7 +30,7 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func (a *AuthService) CreateUser(user *models.User) (error) {
+func (a *AuthService) CreateUser(user *models.User) error {
 	user.Password = generatePasswordHash(user.Password)
 	return a.repo.CreateUser(user)
 }
@@ -73,7 +73,7 @@ func (a *AuthService) ParseToken(accessToken string) (uint, error) {
 }
 
 func (a *AuthService) GetUserByID(userID uint) (models.User, error) {
-	
+
 	return a.repo.GetUserByID(userID)
 }
 

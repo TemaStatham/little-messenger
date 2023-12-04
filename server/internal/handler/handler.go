@@ -7,11 +7,17 @@ import (
 )
 
 type Handler struct {
-	services *services.Service
+	services         *services.Service
+	// websocketService *server.WebSocketService
+	// hub              *server.Hub
 }
 
 func NewHandler(services *services.Service) *Handler {
-	return &Handler{services: services}
+	return &Handler{
+		services:         services,
+		// websocketService: websocketService,
+		// hub:              h,
+	}
 }
 
 func (h *Handler) InitRoutes() *gin.Engine {
@@ -33,10 +39,11 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	}
 
 	api := router.Group("/api")
-    {
-        api.OPTIONS("", h.options)
-        api.POST("", h.userIdentity)
-    }
+	{
+		api.OPTIONS("", h.options)
+		api.POST("", h.userIdentity)
+		
+	}
 
 	return router
 }

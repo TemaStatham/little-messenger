@@ -15,14 +15,20 @@ type Chat interface {
 	GetChats(userID uint) (chats models.Chat, err error)
 }
 
+type WebSocket interface {
+
+}
+
 type Repository struct {
 	Authorization
 	Chat
+	WebSocket
 }
 
 func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
-		Chat : NewChatPostgres(db),
+		Chat:          NewChatPostgres(db),
+		WebSocket: NewWebSocketPostgres(db),
 	}
 }

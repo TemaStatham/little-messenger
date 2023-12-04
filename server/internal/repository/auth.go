@@ -50,7 +50,7 @@ func (r *AuthPostgres) GetUser(email, password string) (user models.User, err er
 	return
 }
 
-func (r *AuthPostgres) GetUserByID(userID uint) (user models.User,err error) {
+func (r *AuthPostgres) GetUserByID(userID uint) (user models.User, err error) {
 	query := `SELECT * FROM users WHERE id = $1`
 
 	err = r.db.Raw(query, userID).Scan(&user).Error

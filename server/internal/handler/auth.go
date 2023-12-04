@@ -28,12 +28,12 @@ func (h *Handler) signUp(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"status" : "Успешная регистрация",
+		"status": "Успешная регистрация",
 	})
 }
 
 type signInInput struct {
-	Email string `json:"email" binding:"required"`
+	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
 
