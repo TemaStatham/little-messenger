@@ -13,11 +13,10 @@ type Authorization interface {
 }
 
 type Chat interface {
-	GetChats(userID uint) (models.Chat, error)
+	GetChats(userID uint) ([]models.Chat, error)
 }
 
 type WebSocket interface {
-
 }
 
 type Service struct {
@@ -30,6 +29,6 @@ func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),
 		Chat:          NewChatService(repos.Chat),
-		WebSocket: 	   NewWebSocketService(repos.WebSocket),
+		WebSocket:     NewWebSocketService(repos.WebSocket),
 	}
 }

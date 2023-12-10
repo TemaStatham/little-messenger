@@ -12,11 +12,15 @@ type Authorization interface {
 }
 
 type Chat interface {
-	GetChats(userID uint) (chats models.Chat, err error)
+	GetChats(userID uint) (chats []models.Chat, err error)
+	GetMessages(userID uint) (messages []models.Message, err error)
+	CreateChat(firstUser *models.User, secondUser *models.User) (err error)
+	CreateMessage() ()
 }
 
 type WebSocket interface {
-
+	GetChats(userID uint) (chats models.Chat, err error)
+	GetMessages(userID uint) (messages []models.Message, err error)
 }
 
 type Repository struct {
@@ -29,6 +33,6 @@ func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
 		Chat:          NewChatPostgres(db),
-		WebSocket: NewWebSocketPostgres(db),
+		WebSocket:     NewWebSocketPostgres(db),
 	}
 }

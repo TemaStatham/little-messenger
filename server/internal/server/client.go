@@ -2,23 +2,19 @@ package server
 
 import (
 	"bytes"
+	"encoding/json"
 	"log"
 	"time"
 
+	"github.com/TemaStatham/Little-Messenger/internal/models"
+	"github.com/TemaStatham/Little-Messenger/internal/services"
 	"github.com/gorilla/websocket"
 )
 
 const (
-	// Time allowed to write a message to the peer.
-	writeWait = 10 * time.Second
-
-	// Time allowed to read the next pong message from the peer.
-	pongWait = 60 * time.Second
-
-	// Send pings to peer with this period. Must be less than pongWait.
-	pingPeriod = (pongWait * 9) / 10
-
-	// Maximum message size allowed from peer.
+	writeWait      = 10 * time.Second
+	pongWait       = 60 * time.Second
+	pingPeriod     = (pongWait * 9) / 10
 	maxMessageSize = 512
 )
 
@@ -27,22 +23,21 @@ var (
 	space   = []byte{' '}
 )
 
-// Client is a middleman between the websocket connection and the hub.
-type Client struct {
-	hub *Hub
-
-	// The websocket connection.
-	conn *websocket.Conn
-
-	// Buffered channel of outbound messages.
-	send chan []byte
+type Message struct {
+	ClientID string `json:"clientID"`
+	ChatID   string `json:"chatID"`
+	Type    string `json:"type"`
+	Content string `json:"content"`
 }
 
-// readPump pumps messages from the websocket connection to the hub.
-//
-// The application runs readPump in a per-connection goroutine. The application
-// ensures that there is at most one reader on a connection by executing all
-// reads from this goroutine.
+type Client struct {
+	hub      *Hub
+	conn     *websocket.Conn
+	send     chan []byte
+	services *services.Service
+	clientID uint
+}
+
 func (c *Client) readPump() {
 	defer func() {
 		c.hub.unregister <- c
@@ -60,15 +55,64 @@ func (c *Client) readPump() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		c.hub.broadcast <- message
+
+		c.recognizeMessage(message)
+		
 	}
 }
 
-// writePump pumps messages from the hub to the websocket connection.
-//
-// A goroutine running writePump is started for each connection. The
-// application ensures that there is at most one writer to a connection by
-// executing all writes from this goroutine.
+func (c *Client) recognizeMessage(message []byte) {
+	var parsedMessage Message
+	if err := json.Unmarshal(message, &parsedMessage); err != nil {
+		log.Printf("error unmarshalling JSON: %v", err)
+		return
+	}
+
+	userID, err := c.services.Authorization.ParseToken(parsedMessage.ClientID)
+	if err != nil {
+		log.Printf("%v", err)
+		return
+	}
+	c.clientID = userID
+
+	user, err := c.services.GetUserByID(userID)
+	if err != nil {
+		log.Printf("%v", err)
+		return
+	}
+
+	switch parsedMessage.Type {
+	case "auth":
+		chats, err := c.services.GetChats(userID)
+		if err != nil {
+			log.Printf("%v", err)
+			return
+		}
+		type content struct {
+			User models.User `json:"User"`
+			Chat []models.Chat `json:"Chat"`
+		}
+		con := content{
+			User: user,
+			Chat: chats,
+		}
+		jsonData, err := json.Marshal(con)
+		if err != nil {
+			log.Println("Ошибка при маршалинге в JSON:", err)
+			return
+		}
+		c.send <- jsonData
+	case "send":
+		break
+	case "create chat":
+		break
+	case "add new contact":
+		break
+	default:
+		log.Printf("Unknown message type: %s", parsedMessage.ClientID)
+	}
+}
+
 func (c *Client) writePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
@@ -91,7 +135,6 @@ func (c *Client) writePump() {
 			}
 			w.Write(message)
 
-			// Add queued chat messages to the current websocket message.
 			n := len(c.send)
 			for i := 0; i < n; i++ {
 				w.Write(newline)

@@ -5,6 +5,10 @@ type ContactsProps = {
 };
 
 export const Contacts = (props: ContactsProps) => {
+  if (!props.contacts) {
+    return <></>;
+  }
+
   return (
     <div className={styles.contacts}>
       {props.contacts.map((contact) => (

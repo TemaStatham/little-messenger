@@ -8,6 +8,7 @@ import (
 	"github.com/TemaStatham/Little-Messenger/config"
 	"github.com/TemaStatham/Little-Messenger/internal/handler"
 	"github.com/TemaStatham/Little-Messenger/internal/repository"
+	"github.com/TemaStatham/Little-Messenger/internal/server"
 	"github.com/TemaStatham/Little-Messenger/internal/services"
 )
 
@@ -68,7 +69,8 @@ func main() {
 
 	repos := repository.NewRepository(db)
 	serv := services.NewService(repos)
-	handlers := handler.NewHandler(serv)
+	websocketService := server.NewWebSocket(serv)
+	handlers := handler.NewHandler(serv, websocketService)
 
 	router := handlers.InitRoutes()
 	router.Run()

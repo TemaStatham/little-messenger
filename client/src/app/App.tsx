@@ -1,4 +1,4 @@
-import { ChatComponent } from '../components/chat/ChatComponent';
+import { ChatComponent } from './chat/ChatComponent';
 import { Auth } from './auth/Auth';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 

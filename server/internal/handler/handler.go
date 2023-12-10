@@ -1,22 +1,21 @@
 package handler
 
 import (
+	"github.com/TemaStatham/Little-Messenger/internal/server"
 	"github.com/TemaStatham/Little-Messenger/internal/services"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
-	services         *services.Service
-	// websocketService *server.WebSocketService
-	// hub              *server.Hub
+	services  *services.Service
+	websocket *server.WebSocket
 }
 
-func NewHandler(services *services.Service) *Handler {
+func NewHandler(services *services.Service, websocket *server.WebSocket) *Handler {
 	return &Handler{
-		services:         services,
-		// websocketService: websocketService,
-		// hub:              h,
+		services:  services,
+		websocket: websocket,
 	}
 }
 
@@ -42,7 +41,19 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		api.OPTIONS("", h.options)
 		api.POST("", h.userIdentity)
-		
+
+	}
+
+	hub := server.NewHub()
+	go hub.Run()
+	ws := router.Group("/ws")
+	{
+		ws.GET("", func(c *gin.Context) {
+			h.websocket.ServeWebSocket(c, hub)
+		})
+		ws.POST("", func(c *gin.Context) {
+			h.websocket.ServeWebSocket(c, hub)
+		})
 	}
 
 	return router
