@@ -41,13 +41,13 @@ func (h *Handler) userIdentity(c *gin.Context) {
 		return
 	}
 
-	user, err := h.services.GetUserByID(userID)
+	user, err := h.services.GetUserByID(1)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 
-	chats, err := h.services.GetChats(userID)
+	chats, err := h.services.GetChats(1)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return

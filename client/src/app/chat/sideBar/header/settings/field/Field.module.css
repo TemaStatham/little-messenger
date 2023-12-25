@@ -1,0 +1,11 @@
+.field {
+  background-color: rgb(211, 211, 211);
+  width: 220px;
+  height: 40px;
+  border-radius: 20px;
+  text-align: center;
+  font-size: 23px;
+
+  margin: 5px 5px;
+  line-height: 40px;
+}

@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/TemaStatham/Little-Messenger/internal/models"
-	"gorm.io/gorm"
+	"github.com/jmoiron/sqlx"
 )
 
 type Authorization interface {
@@ -15,7 +15,7 @@ type Chat interface {
 	GetChats(userID uint) (chats []models.Chat, err error)
 	GetMessages(userID uint) (messages []models.Message, err error)
 	CreateChat(firstUser *models.User, secondUser *models.User) (err error)
-	CreateMessage() ()
+	CreateMessage()
 }
 
 type WebSocket interface {
@@ -29,7 +29,7 @@ type Repository struct {
 	WebSocket
 }
 
-func NewRepository(db *gorm.DB) *Repository {
+func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
 		Chat:          NewChatPostgres(db),

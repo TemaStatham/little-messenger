@@ -9,7 +9,7 @@ type Authorization interface {
 	CreateUser(user *models.User) error
 	GetUserByID(userID uint) (models.User, error)
 	GenerateToken(username, password string) (string, error)
-	ParseToken(token string) (uint, error)
+	ParseToken(token string) (string, error)
 }
 
 type Chat interface {

@@ -3,11 +3,10 @@ package repository
 import (
 	"fmt"
 
-	"github.com/TemaStatham/Little-Messenger/internal/models"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"github.com/jmoiron/sqlx"
 )
 
+// Config : конфигурация для подключения к базе данных
 type Config struct {
 	Host     string
 	Port     string
@@ -17,29 +16,21 @@ type Config struct {
 	SSLMode  string
 }
 
-func NewPostgresDB(cfg Config) (*gorm.DB, error) {
+const (
+	postgres = "postgres"
+)
+
+// NewPostgresDB : создает подключение к базе данных
+func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
 	dsn := fmt.Sprintf("host=%s user=%s dbname=%s port=%s password=%s sslmode=%s",
 		cfg.Host, cfg.Username, cfg.DBName, cfg.Port, cfg.Password, cfg.SSLMode)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		SkipDefaultTransaction: true,
-	})
-
+	db, err := sqlx.Open(postgres, dsn)
 	if err != nil {
 		return nil, err
 	}
 
-	err = db.AutoMigrate(
-		models.User{},
-		models.RefreshSession{},
-		models.Chat{},
-		models.Message{},
-		models.Conversation{},
-		models.ConversationParticipant{},
-		models.Contacts{},
-		models.UserActivity{},
-	)
-
+	err = db.Ping()
 	if err != nil {
 		return nil, err
 	}

@@ -26,8 +26,8 @@ var (
 type Message struct {
 	ClientID string `json:"clientID"`
 	ChatID   string `json:"chatID"`
-	Type    string `json:"type"`
-	Content string `json:"content"`
+	Type     string `json:"type"`
+	Content  string `json:"content"`
 }
 
 type Client struct {
@@ -57,7 +57,7 @@ func (c *Client) readPump() {
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 
 		c.recognizeMessage(message)
-		
+
 	}
 }
 
@@ -68,14 +68,14 @@ func (c *Client) recognizeMessage(message []byte) {
 		return
 	}
 
-	userID, err := c.services.Authorization.ParseToken(parsedMessage.ClientID)
-	if err != nil {
-		log.Printf("%v", err)
-		return
-	}
-	c.clientID = userID
+	// userID, err := c.services.Authorization.ParseToken(parsedMessage.ClientID)
+	// if err != nil {
+	// 	log.Printf("%v", err)
+	// 	return
+	// }
+	c.clientID = 1
 
-	user, err := c.services.GetUserByID(userID)
+	user, err := c.services.GetUserByID(c.clientID)
 	if err != nil {
 		log.Printf("%v", err)
 		return
@@ -83,13 +83,13 @@ func (c *Client) recognizeMessage(message []byte) {
 
 	switch parsedMessage.Type {
 	case "auth":
-		chats, err := c.services.GetChats(userID)
+		chats, err := c.services.GetChats(c.clientID)
 		if err != nil {
 			log.Printf("%v", err)
 			return
 		}
 		type content struct {
-			User models.User `json:"User"`
+			User models.User   `json:"User"`
 			Chat []models.Chat `json:"Chat"`
 		}
 		con := content{

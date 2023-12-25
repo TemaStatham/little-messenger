@@ -46,15 +46,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	hub := server.NewHub()
 	go hub.Run()
-	ws := router.Group("/ws")
-	{
-		ws.GET("", func(c *gin.Context) {
-			h.websocket.ServeWebSocket(c, hub)
-		})
-		ws.POST("", func(c *gin.Context) {
-			h.websocket.ServeWebSocket(c, hub)
-		})
-	}
+	router.GET("/ws", func(c *gin.Context) {
+		h.websocket.ServeWebSocket(c, hub)
+	})
+	router.POST("/ws", func(c *gin.Context) {
+		h.websocket.ServeWebSocket(c, hub)
+	})
 
 	return router
 }
