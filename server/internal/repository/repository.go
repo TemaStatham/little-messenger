@@ -5,34 +5,35 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type Authorization interface {
-	CreateUser(user *models.User) error
-	GetUser(username, password string) (user models.User, err error)
-	GetUserByID(userID uint) (user models.User, err error)
+// User - интерфейс для взаимодействия с данными пользователей в базе данных.
+type User interface {
+	CreateUser(user *models.User) (uint, error)
+	CreateUserPhoto(userID uint, imageURLs []string) error
+	CreateContact(user1ID, user2ID uint) (contactID int, err error)
+	GetUser(email, password string) (user *models.User, err error)
+	GetUserByID(userID uint) (user *models.User, err error)
+	GetUserPhotosByUserID(userID uint) ([]string, error)
+	GetContactsIDsByUserID(userID uint) ([]uint, error)
+	GetContactsByUserID(userID uint) ([]*models.User, error)
 }
 
+// Chat - интерфейс для взаимодействия с данными бесед и сообщений в базе данных.
 type Chat interface {
-	GetChats(userID uint) (chats []models.Chat, err error)
-	GetMessages(userID uint) (messages []models.Message, err error)
-	CreateChat(firstUser *models.User, secondUser *models.User) (err error)
-	CreateMessage()
+	GetConversation(name string) (conv *models.Conversation, err error)
+	GetMessages(convID uint) ([]*models.Message, error)
+	GetConversationMember(convID uint) ([]*models.ConversationMember, error)
 }
 
-type WebSocket interface {
-	GetChats(userID uint) (chats models.Chat, err error)
-	GetMessages(userID uint) (messages []models.Message, err error)
-}
-
+// Repository - структура, объединяющая различные репозитории для работы с данными.
 type Repository struct {
-	Authorization
+	User
 	Chat
-	WebSocket
 }
 
+// NewRepository - конструктор для создания нового экземпляра Repository.
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		Authorization: NewAuthPostgres(db),
-		Chat:          NewChatPostgres(db),
-		WebSocket:     NewWebSocketPostgres(db),
+		User: NewUserPostgres(db),
+		Chat: NewChatPostgres(db),
 	}
 }

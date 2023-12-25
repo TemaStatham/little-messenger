@@ -6,7 +6,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/TemaStatham/Little-Messenger/internal/models"
 	"github.com/TemaStatham/Little-Messenger/internal/services"
 	"github.com/gorilla/websocket"
 )
@@ -75,33 +74,33 @@ func (c *Client) recognizeMessage(message []byte) {
 	// }
 	c.clientID = 1
 
-	user, err := c.services.GetUserByID(c.clientID)
-	if err != nil {
-		log.Printf("%v", err)
-		return
-	}
+	// user, err := c.services.GetUserByID(c.clientID)
+	// if err != nil {
+	// 	log.Printf("%v", err)
+	// 	return
+	// }
 
 	switch parsedMessage.Type {
 	case "auth":
-		chats, err := c.services.GetChats(c.clientID)
-		if err != nil {
-			log.Printf("%v", err)
-			return
-		}
-		type content struct {
-			User models.User   `json:"User"`
-			Chat []models.Chat `json:"Chat"`
-		}
-		con := content{
-			User: user,
-			Chat: chats,
-		}
-		jsonData, err := json.Marshal(con)
-		if err != nil {
-			log.Println("Ошибка при маршалинге в JSON:", err)
-			return
-		}
-		c.send <- jsonData
+		// chats, err := c.services.GetChats(c.clientID)
+		// if err != nil {
+		// 	log.Printf("%v", err)
+		// 	return
+		// }
+		// type content struct {
+		// 	User models.User   `json:"User"`
+		// 	Chat []models.Chat `json:"Chat"`
+		// }
+		// con := content{
+		// 	User: user,
+		// 	Chat: chats,
+		// }
+		// jsonData, err := json.Marshal(con)
+		// if err != nil {
+		// 	log.Println("Ошибка при маршалинге в JSON:", err)
+		// 	return
+		// }
+		// c.send <- jsonData
 	case "send":
 		break
 	case "create chat":

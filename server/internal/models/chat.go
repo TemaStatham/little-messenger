@@ -4,9 +4,11 @@ import "time"
 
 // Conversation : беседа
 type Conversation struct {
-	Users     []*ConversationMember
-	CreatedAt time.Time  `json:"createdAt"`
-	Messages  []*Message `json:"messages"`
+	ID        uint                  `json:"id"`
+	Name      string                `json:"name"`
+	CreatedAt time.Time             `json:"createdAt"`
+	Users     []*ConversationMember `json:"users"`
+	Messages  []*Message            `json:"messages"`
 }
 
 // ConversationMember : участник беседы
@@ -18,6 +20,7 @@ type ConversationMember struct {
 
 // Chat : личные сообщения
 type Chat struct {
+	ID       uint       `json:"id"`
 	User1    *User      `json:"user1"`
 	User2    *User      `json:"user2"`
 	Messages []*Message `json:"messages"`
@@ -25,7 +28,8 @@ type Chat struct {
 
 // Message : сообщение
 type Message struct {
-	Sender    *User     `json:"sender"`
-	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"createdAt"`
+	ID       uint      `json:"id"`
+	Sender   *User     `json:"sender"`
+	Content  string    `json:"content"`
+	SendTime time.Time `json:"sendTime"`
 }

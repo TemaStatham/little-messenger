@@ -35,7 +35,7 @@ func (h *Handler) userIdentity(c *gin.Context) {
 		return
 	}
 
-	userID, err := h.services.Authorization.ParseToken(headerParts[1])
+	userID, err := h.services.User.ParseToken(headerParts[1])
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
@@ -47,7 +47,7 @@ func (h *Handler) userIdentity(c *gin.Context) {
 		return
 	}
 
-	chats, err := h.services.GetChats(1)
+	// chats, err := h.services.GetChats(1)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
@@ -56,6 +56,6 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	c.Set(userCtx, userID)
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"user": user,
-		"chat": chats,
+		// "chat": chats,
 	})
 }

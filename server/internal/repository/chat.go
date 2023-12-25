@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/TemaStatham/Little-Messenger/internal/models"
 	"github.com/jmoiron/sqlx"
 )
@@ -15,38 +17,79 @@ func NewChatPostgres(db *sqlx.DB) *ChatPostgres {
 	return &ChatPostgres{db: db}
 }
 
-func (r *ChatPostgres) GetChats(userID uint) (chats []models.Chat, err error) {
-	//query := `SELECT * FROM chats WHERE user1_id = $1 OR user2_id = $1`
+// GetConversation - метод получения беседы из бд
+func (r *ChatPostgres) GetConversation(name string) (conv *models.Conversation, err error) {
+	query := `
+        SELECT c.id, c.name, c.created_at, u.id as user_id, u.username, u.first_name, u.last_name, u.email, u.photo_id, u.path,
+               cm.entry_at, cm.release_at,
+               m.content, m.send_time
+        FROM chats c
+        LEFT JOIN conversation_members cm ON c.id = cm.chat_id
+        LEFT JOIN users u ON cm.user_id = u.id
+        LEFT JOIN messages m ON c.id = m.chat_id
+        WHERE c.name = $1
+    `
 
-	err = nil
+	err = r.db.Get(&conv, query, name)
+	if err != nil {
+		return nil, fmt.Errorf("error getting conversation: %v", err)
+	}
 
-	return
+	return conv, nil
 }
 
-func (r *ChatPostgres) GetMessages(userID uint) (messages []models.Message, err error) {
-	// query := `
-	// 	SELECT *
-	// 	FROM messages
-	// 	WHERE sender_id = $1
-	// `
+// GetMessage -
+func (r *ChatPostgres) GetMessage(messId uint) (*models.Message, error) {
+	query := `
+        SELECT m.id, m.content, m.send_time 
+        FROM messages m
+        WHERE m.id = $1
+    `
 
-	err = nil
+	var message *models.Message
 
-	return
+	err := r.db.Select(&message, query, messId)
+	if err != nil {
+		return nil, fmt.Errorf("error getting message: %v", err)
+	}
+
+	return message, nil
 }
 
-func (r *ChatPostgres) CreateChat(firstUser *models.User, secondUser *models.User) (err error) {
-	// query := `INSERT INTO chats
-	// (
-	// 	user1_id,
-	// 	user2_id,
-	// ) VALUES ($1 $2)`
+// GetMessages - метод получения сообщений беседы из базы данных.
+func (r *ChatPostgres) GetMessages(convID uint) ([]*models.Message, error) {
+	query := `
+        SELECT m.content, m.send_time, u.id, u.username, u.first_name, u.last_name, u.email, u.photo_id, u.path
+        FROM messages m
+        JOIN users u ON m.user_id = u.id
+        WHERE m.chat_id = $1
+    `
 
-	err = nil
+	var messages []*models.Message
 
-	return
+	err := r.db.Select(&messages, query, convID)
+	if err != nil {
+		return nil, fmt.Errorf("error getting messages: %v", err)
+	}
+
+	return messages, nil
 }
 
-func (r *ChatPostgres) CreateMessage() {
-	return
+// GetConversationMember - метод для получения участников беседы из базы данных.
+func (r *ChatPostgres) GetConversationMember(convID uint) ([]*models.ConversationMember, error) {
+	query := `
+        SELECT u.id, u.username, u.first_name, u.last_name, u.email, u.photo_id, u.path
+        FROM conversation_members cm
+        JOIN users u ON cm.user_id = u.id
+        WHERE cm.chat_id = $1
+    `
+
+	var members []*models.ConversationMember
+
+	err := r.db.Select(&members, query, convID)
+	if err != nil {
+		return nil, fmt.Errorf("error getting conversation members: %v", err)
+	}
+
+	return members, nil
 }

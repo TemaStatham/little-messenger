@@ -5,30 +5,29 @@ import (
 	"github.com/TemaStatham/Little-Messenger/internal/repository"
 )
 
-type Authorization interface {
-	CreateUser(user *models.User) error
-	GetUserByID(userID uint) (models.User, error)
-	GenerateToken(username, password string) (string, error)
-	ParseToken(token string) (string, error)
+// User - интерфейс, определяющий сервисы, связанные с пользователями.
+type User interface {
+	CreateUser(user *models.User) (uint, error)
+	GetUserByID(userID uint) (*models.User, error)
+	GenerateToken(email, password string) (string, error)
+	ParseToken(accessToken string) (uint, error)
 }
 
+// Chat - интерфейс, определяющий сервисы, связанные с чатами.
 type Chat interface {
-	GetChats(userID uint) ([]models.Chat, error)
+	GetConversation(name string) (conv *models.Conversation, err error)
 }
 
-type WebSocket interface {
-}
-
+// Service представляет основной уровень сервиса, объединяющий сервисы User, Chat и WebSocket.
 type Service struct {
-	Authorization
+	User
 	Chat
-	WebSocket
 }
 
+// NewService создает новый экземпляр Service с предоставленным репозиторием.
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
-		Authorization: NewAuthService(repos.Authorization),
-		Chat:          NewChatService(repos.Chat),
-		WebSocket:     NewWebSocketService(repos.WebSocket),
+		User: NewUserService(repos.User),
+		Chat: NewChatService(repos.Chat),
 	}
 }
