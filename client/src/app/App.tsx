@@ -32,7 +32,9 @@ const checkTokenValidity = async (
     if (data.user) {
       setUser(data.user);
     }
+    return;
   };
+  setUser(null);
 };
 
 const App: React.FC = () => {
@@ -120,10 +122,10 @@ const App: React.FC = () => {
     }, 1000);
   }
 
-  return (
-    <BrowserRouter>
-      <Routes>
-        {user ? (
+  if (user) {
+    return (
+      <BrowserRouter>
+        <Routes>
           <Route
             path="/"
             element={
@@ -134,11 +136,11 @@ const App: React.FC = () => {
               />
             }
           />
-        ) : null}
-        <Route path="/auth" element={<Auth />} />
-      </Routes>
-    </BrowserRouter>
-  );
+          <Route path="/auth" element={<Auth />} />
+        </Routes>
+      </BrowserRouter>
+    );
+  }
 };
 
 export default App;

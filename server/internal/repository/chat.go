@@ -99,15 +99,15 @@ func (c *ChatPostgres) CreateChatMember(userID, chatID uint) error {
 // GetUserPublicChats получает публичные чаты, в которых участвует пользователь
 func (c *ChatPostgres) GetUserPublicChats(userID uint) ([]models.Conversation, error) {
 	query := `
-        SELECT pc.chat_id, pc.name, pc.creation_date, u.id as creator_id, u.username as creator_username
+        SELECT pc.chat_id as chat_id, pc.name as name, pc.creation_date as creation_date, pc.creator_user_id as creator_user_id
         FROM public_chats pc
-        JOIN chat_members cm ON pc.chat_id = cm.chat_id
         JOIN users u ON pc.creator_user_id = u.id
-        WHERE cm.user_id = $1
+        WHERE u.id = $1
     `
+
 	var userPublicChats []models.Conversation
 	if err := c.db.Select(&userPublicChats, query, userID); err != nil {
-		return nil, fmt.Errorf("error getting user chats: %v", err)
+		return nil, fmt.Errorf("error getting user public chats: %v", err)
 	}
 
 	// Заполнение Messages нужно добавить в зависимости от вашей логики,
@@ -126,8 +126,7 @@ func (c *ChatPostgres) GetUserPublicChats(userID uint) ([]models.Conversation, e
 // GetUserPrivateChats получает личные чаты, в которых участвует пользователь
 func (c *ChatPostgres) GetUserPrivateChats(userID uint) ([]models.Chat, error) {
 	query := `
-        SELECT pc.chat_id, u1.id as user1_id, u1.username as user1_username,
-               u2.id as user2_id, u2.username as user2_username
+        SELECT pc.chat_id as chat_id
         FROM private_chats pc
         JOIN users u1 ON pc.user1_id = u1.id
         JOIN users u2 ON pc.user2_id = u2.id

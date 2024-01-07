@@ -21,6 +21,9 @@ type Chat interface {
 	CreateChatMember(userID, chatID uint) error
 	CreatePrivateChat(user1ID, user2ID uint) error
 	CreatePublicChat(creatorID uint, name string) error
+	GetConversationsByUserID(userID uint) ([]models.Conversation, error) 
+	GetChatsByUserID(userID uint) ([]models.Chat, error)
+	GetChatMessages(chatID uint) ([]models.Message, error) 
 }
 
 // Service представляет основной уровень сервиса, объединяющий сервисы User, Chat и WebSocket.

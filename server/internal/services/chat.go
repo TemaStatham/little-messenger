@@ -30,18 +30,13 @@ func (c *ChatService) CreateChatMember(userID, chatID uint) error {
 	return c.repo.CreateChatMember(userID, chatID)
 }
 
-// // GetConversation возвращает беседу по ее имени.
-// func (c *ChatService) GetConversation(name string) (conv *models.Conversation, err error) {
-// 	return c.repo.GetConversation(name)
-// }
-
 // GetConversationsByUserID возвращает все чаты, в которых участвует пользователь, по его идентификатору.
 func (c *ChatService) GetConversationsByUserID(userID uint) ([]models.Conversation, error) {
 	return c.repo.GetUserPublicChats(userID)
 }
 
 // GetChatsByUserID возвращает все личные беседы, в которых участвует пользователь, по его идентификатору.
-func(c *ChatService) GetChatsByUserID(userID uint) ([]models.Chat, error) {
+func (c *ChatService) GetChatsByUserID(userID uint) ([]models.Chat, error) {
 	return c.repo.GetUserPrivateChats(userID)
 }
 

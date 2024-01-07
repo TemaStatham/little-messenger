@@ -82,8 +82,20 @@ func (c *Client) recognizeMessage(message []byte) {
 			log.Printf("%v\n", err)
 			return
 		}
+		chats, err := c.services.GetChatsByUserID(userID)
+		if err != nil {
+			log.Printf("%v\n", err)
+			return
+		}
+		conversations, err := c.services.GetConversationsByUserID(userID)
+		if err != nil {
+			log.Printf("%v\n", err)
+			return
+		}
 		jsonData, err := json.Marshal(map[string]interface{}{
 			"user": user,
+			"chats": chats,
+			"conversations": conversations,
 		})
 		if err != nil {
 			log.Println("ошибка при маршалинге в JSON:", err)
