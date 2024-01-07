@@ -6,7 +6,7 @@ import { CounterState } from './States';
 import { AddContactComponent } from './popups/addContact/AddContact';
 import { CreateChatComponent } from './popups/createChat/CreateChat';
 import { ShowContactsComponent } from './popups/showContact/ShowContact';
-import { User } from './../User';
+import { User } from '../../User';
 
 type SideBarProps = {
   ws: WebSocket;

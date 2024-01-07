@@ -3,7 +3,7 @@ import { Form } from './form/Form';
 import { OutgoingBlock } from './outgoingBlock/OutgoingBlock';
 import { Messages } from './messages/Messagex';
 import { Header } from './header/Header';
-import { User } from '../User';
+import { User } from '../../User';
 
 type ChatConteinerProps = {
   user: User | null;

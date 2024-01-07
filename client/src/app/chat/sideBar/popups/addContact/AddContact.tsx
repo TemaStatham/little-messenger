@@ -2,7 +2,7 @@ import styles from './AddContact.module.css';
 import { CounterState } from '../../States';
 import { useEffect, useState } from 'react';
 import { Contact } from './contact/Contact';
-import { User } from '../../../User';
+import { User } from '../../../../User';
 
 type AddContactComponentProps = {
   handleState: (state: CounterState) => void;

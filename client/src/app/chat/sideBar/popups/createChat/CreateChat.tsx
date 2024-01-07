@@ -1,6 +1,6 @@
 import styles from './CreateChat.module.css';
 import { CounterState } from '../../States';
-import { User } from '../../../User';
+import { User } from '../../../../User';
 import { useState } from 'react';
 
 type CreateChatComponentProps = {

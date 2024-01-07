@@ -1,6 +1,6 @@
 import styles from './Contact.module.css';
 import { CounterState } from '../../../States';
-import { User } from '../../../../User';
+import { User } from '../../../../../User';
 
 type ContactProps = {
   id: string;
