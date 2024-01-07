@@ -37,7 +37,7 @@
 
 p {
   margin: 5px auto;
-  font-size: 25px;
+  font-size: 20px;
 }
 
 .form {
@@ -76,13 +76,13 @@ p {
 }
 
 .form__button {
-  width: 80%;
-  height: 10%;
-  margin: 40px 10px;
+  width: 70%;
+  height: 8%;
+  margin: 30px 10px;
 
   font-size: 20px;
 
-  border-radius: 10px;
+  border-radius: 25px;
   border-width: 0.5px 1px 1px;
   border-color: #ffffff;
   background-color: #0047ff;

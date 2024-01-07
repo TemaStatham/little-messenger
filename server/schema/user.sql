@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS contacts (
     id SERIAL PRIMARY KEY,
     user1_id INT NOT NULL,
     user2_id INT NOT NULL,
+    CONSTRAINT unique_user_pair UNIQUE (user1_id, user2_id),
     FOREIGN KEY (user1_id) REFERENCES users(id),
     FOREIGN KEY (user2_id) REFERENCES users(id)
 );

@@ -41,21 +41,21 @@ func (h *Handler) userIdentity(c *gin.Context) {
 		return
 	}
 
-	user, err := h.services.GetUserByID(1)
+	user, err := h.services.GetUserByID(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 
-	// chats, err := h.services.GetChats(1)
-	if err != nil {
-		newErrorResponse(c, http.StatusUnauthorized, err.Error())
-		return
-	}
+	// chats, err := h.services.GetConversationsByUserID(userID)
+	// if err != nil {
+	// 	newErrorResponse(c, http.StatusUnauthorized, err.Error())
+	// 	return
+	// }
 
 	c.Set(userCtx, userID)
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"user": user,
-		// "chat": chats,
+		//"chat": chats,
 	})
 }

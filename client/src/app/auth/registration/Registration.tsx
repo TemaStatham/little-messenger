@@ -1,9 +1,12 @@
 import styles from './Registration.module.css';
 import { useState, useEffect } from 'react';
 import { Endpoints } from '../../../Endpoints';
+import { Field, FieldProps } from './field/Field';
 
 const registrateUser = async (
   name: string,
+  lname: string,
+  fname: string,
   email: string,
   password: string,
 ) => {
@@ -14,15 +17,11 @@ const registrateUser = async (
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        age: 25,
-        googleImage: 'https://example.com/image.jpg',
-        firstName: 'John',
-        lastName: 'Doe',
         userName: name,
+        firstName: fname,
+        lastName: lname,
         email: email,
         password: password,
-        createdAt: new Date(),
-        updatedAt: new Date(),
       }),
     });
 
@@ -45,11 +44,12 @@ type RegistrationProps = {
 
 export const Registration = (props: RegistrationProps) => {
   const [name, setName] = useState('');
+  const [fname, setFName] = useState('');
+  const [lname, setLName] = useState('');
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
   const [isValidEmail, setIsValidEmail] = useState(true);
-  // const [errorMessage, setErrorMessage] = useState('');
   const [pressed, setPressed] = useState(false);
 
   useEffect(() => {
@@ -59,16 +59,60 @@ export const Registration = (props: RegistrationProps) => {
 
   useEffect(() => {
     if (isValidEmail && pressed) {
-      registrateUser(name, email, pass);
+      registrateUser(name, fname, lname, email, pass);
     }
     if (!isValidEmail) {
-      //setErrorMessage('Некорректный email');
       console.log('Invalid email');
     }
     return () => {
       setPressed(false);
     };
   }, [pressed]);
+
+  const fieldPropsArray: FieldProps[] = [
+    {
+      tittle: 'Username',
+      type: 'text',
+      value: name,
+      setName: setName,
+      placeholder: 'name',
+    },
+    {
+      tittle: 'Имя',
+      type: 'text',
+      value: fname,
+      setName: setFName,
+      placeholder: 'fname',
+    },
+    {
+      tittle: 'Фамилия',
+      type: 'text',
+      value: lname,
+      setName: setLName,
+      placeholder: 'lname',
+    },
+    {
+      tittle: 'Почта',
+      type: 'email',
+      value: email,
+      setName: setEmail,
+      placeholder: 'email',
+    },
+    {
+      tittle: 'Пароль',
+      type: 'password',
+      value: pass,
+      setName: setPass,
+      placeholder: 'password',
+    },
+    {
+      tittle: 'Подтвердите пароль',
+      type: 'password',
+      value: confirmPass,
+      setName: setConfirmPass,
+      placeholder: 'password',
+    },
+  ];
 
   return (
     <div className={styles.registration}>
@@ -81,51 +125,14 @@ export const Registration = (props: RegistrationProps) => {
       <div className={styles.registration__form}>
         <div className={styles.registration__tittle}>Регистрация</div>
         <form className={styles.form}>
-          <div className={styles.form__element}>
-            <p>Имя</p>
-            <input
-              className={styles.element}
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="name"
-            />
-          </div>
-          <div className={styles.form__element}>
-            <p>Почта</p>
-            <input
-              className={styles.element}
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="email"
-            />
-          </div>
-          <div className={styles.form__element}>
-            <p>Пароль</p>
-            <input
-              className={styles.element}
-              type="password"
-              value={pass}
-              onChange={(e) => setPass(e.target.value)}
-              placeholder="password"
-            />
-          </div>
-          <div className={styles.form__element}>
-            <p>Подтвердите пароль</p>
-            <input
-              className={styles.element}
-              type="password"
-              value={confirmPass}
-              onChange={(e) => setConfirmPass(e.target.value)}
-              placeholder="password"
-            />
-          </div>
+          {fieldPropsArray.map((fieldProps, index) => (
+            <Field key={index} {...fieldProps} />
+          ))}
           <button
             onClick={() => setPressed(true)}
             className={styles.form__button}
           >
-            Зарегестрироваться
+            Продолжить
           </button>
         </form>
       </div>

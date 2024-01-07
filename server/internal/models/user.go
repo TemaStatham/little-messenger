@@ -2,12 +2,21 @@ package models
 
 // User : пользователь
 type User struct {
-	ID        uint     `json:"id"`
-	Username  string   `json:"username"`
-	FirstName string   `json:"firstName"`
-	LastName  string   `json:"lastName"`
-	Email     string   `json:"email"`
-	Password  string   `json:"password"`
-	ImageURLs []string `json:"imageURL"`
-	Contacts  []*User  `json:"contacts"`
+	ID        uint      `json:"id" db:"id"`
+	Username  string    `json:"username" db:"username"`
+	FirstName string    `json:"firstName" db:"first_name"`
+	LastName  string    `json:"lastName" db:"last_name"`
+	Email     string    `json:"email" db:"email"`
+	Password  string    `json:"password" db:"password"`
+	ImageURLs []string  `json:"imageURL" db:"-"`
+	Contacts  []Contact `json:"contacts" db:"-"`
+}
+
+// Contact -
+type Contact struct {
+	ID        uint   `json:"id" db:"id"`
+	Username  string `json:"username" db:"username"`
+	FirstName string `json:"firstName" db:"first_name"`
+	LastName  string `json:"lastName" db:"last_name"`
+	Email     string `json:"email" db:"email"`
 }

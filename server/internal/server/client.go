@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/TemaStatham/Little-Messenger/internal/services"
@@ -63,52 +64,89 @@ func (c *Client) readPump() {
 func (c *Client) recognizeMessage(message []byte) {
 	var parsedMessage Message
 	if err := json.Unmarshal(message, &parsedMessage); err != nil {
-		log.Printf("error unmarshalling JSON: %v", err)
+		log.Printf("error unmarshalling JSON: %v\n", err)
 		return
 	}
 
-	// userID, err := c.services.Authorization.ParseToken(parsedMessage.ClientID)
-	// if err != nil {
-	// 	log.Printf("%v", err)
-	// 	return
-	// }
-	c.clientID = 1
+	userID, err := c.services.User.ParseToken(parsedMessage.ClientID)
+	if err != nil {
+		log.Printf("%v\n", err)
+		return
+	}
+	c.clientID = userID
 
-	// user, err := c.services.GetUserByID(c.clientID)
-	// if err != nil {
-	// 	log.Printf("%v", err)
-	// 	return
-	// }
+	user, err := c.services.GetUserByID(c.clientID)
+	if err != nil {
+		log.Printf("%v\n", err)
+		return
+	}
 
 	switch parsedMessage.Type {
 	case "auth":
-		// chats, err := c.services.GetChats(c.clientID)
-		// if err != nil {
-		// 	log.Printf("%v", err)
-		// 	return
-		// }
-		// type content struct {
-		// 	User models.User   `json:"User"`
-		// 	Chat []models.Chat `json:"Chat"`
-		// }
-		// con := content{
-		// 	User: user,
-		// 	Chat: chats,
-		// }
-		// jsonData, err := json.Marshal(con)
-		// if err != nil {
-		// 	log.Println("Ошибка при маршалинге в JSON:", err)
-		// 	return
-		// }
-		// c.send <- jsonData
+		jsonData, err := json.Marshal(map[string]interface{}{
+			"user": user,
+		})
+		if err != nil {
+			log.Println("ошибка при маршалинге в JSON:", err)
+			return
+		}
+		c.send <- jsonData
 	case "send":
 		break
 	case "create chat":
+		err := c.services.CreatePublicChat(user.ID, parsedMessage.ChatID)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+		jsonData, err := json.Marshal(map[string]interface{}{
+			"user": user,
+		})
+		if err != nil {
+			log.Println("ошибка при маршалинге в JSON:", err)
+			return
+		}
+		c.send <- jsonData
 		break
-	case "add new contact":
+	case "get users":
+		users, err := c.services.GetUsers()
+		if err != nil {
+			log.Println("error recognize messages get users: ", err)
+			return
+		}
+		jsonData, err := json.Marshal(map[string]interface{}{
+			"user":  user,
+			"users": users,
+		})
+		if err != nil {
+			log.Println("ошибка при маршалинге в JSON: ", err)
+			return
+		}
+		c.send <- jsonData
+		break
+	case "create contact":
+		err := c.services.CreateContact(strconv.FormatUint(uint64(user.ID), 10), parsedMessage.Content)
+		if err != nil {
+			log.Println("не удалось создать контакт: ", err)
+			return
+		}
+		user, err := c.services.GetUserByID(c.clientID)
+		if err != nil {
+			log.Printf("%v\n", err)
+			return
+		}
+		jsonData, err := json.Marshal(map[string]interface{}{
+			"status": "contact create success",
+			"user":   user,
+		})
+		if err != nil {
+			log.Println("ошибка при маршалинге в JSON: ", err)
+			return
+		}
+		c.send <- jsonData
 		break
 	default:
-		log.Printf("Unknown message type: %s", parsedMessage.ClientID)
+		log.Printf("unknown message type: %s", parsedMessage.ClientID)
 	}
 }
 

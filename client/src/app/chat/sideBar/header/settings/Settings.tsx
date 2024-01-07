@@ -1,9 +1,11 @@
 import styles from './Settings.module.css';
 import { Field } from './field/Field';
+import { CounterState } from './../../States';
 
 type SettingsProps = {
   popup: boolean;
   setPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  handleState: (state: CounterState) => void;
 };
 
 export const Settings = (props: SettingsProps) => {
@@ -17,16 +19,23 @@ export const Settings = (props: SettingsProps) => {
       ></div>
       <div className={styles.settings} onClick={() => {}}>
         <Field
-          popup={props.popup}
           setPopup={props.setPopup}
           text="Создать чат"
+          handleState={props.handleState}
+          state={CounterState.CreateChat}
         />
         <Field
-          popup={props.popup}
           setPopup={props.setPopup}
           text="Добавить контакт"
+          handleState={props.handleState}
+          state={CounterState.AddContact}
         />
-        <Field popup={props.popup} setPopup={props.setPopup} text="Контакты" />
+        <Field
+          setPopup={props.setPopup}
+          text="Контакты"
+          handleState={props.handleState}
+          state={CounterState.ShowContacts}
+        />
       </div>
     </>
   );

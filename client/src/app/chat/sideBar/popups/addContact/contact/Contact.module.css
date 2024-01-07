@@ -1,0 +1,12 @@
+.contact {
+  width: 95%;
+  height: 10%;
+  background-color: aqua;
+  margin: 5px 10px;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.contact:hover {
+  background-color: lightblue;
+}

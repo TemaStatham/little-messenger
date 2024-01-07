@@ -8,14 +8,19 @@ import (
 // User - интерфейс, определяющий сервисы, связанные с пользователями.
 type User interface {
 	CreateUser(user *models.User) (uint, error)
-	GetUserByID(userID uint) (*models.User, error)
+	GetUserByEmail(email, password string) (models.User, error)
+	GetUserByID(userID uint) (models.User, error)
 	GenerateToken(email, password string) (string, error)
 	ParseToken(accessToken string) (uint, error)
+	GetUsers() ([]models.Contact, error)
+	CreateContact(userID1 string, userID2 string) error
 }
 
 // Chat - интерфейс, определяющий сервисы, связанные с чатами.
 type Chat interface {
-	GetConversation(name string) (conv *models.Conversation, err error)
+	CreateChatMember(userID, chatID uint) error
+	CreatePrivateChat(user1ID, user2ID uint) error
+	CreatePublicChat(creatorID uint, name string) error
 }
 
 // Service представляет основной уровень сервиса, объединяющий сервисы User, Chat и WebSocket.

@@ -7,6 +7,11 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+const (
+	publicTypeName  = "public"
+	privateTypeName = "private"
+)
+
 // ChatPostgres :
 type ChatPostgres struct {
 	db *sqlx.DB
@@ -17,79 +22,89 @@ func NewChatPostgres(db *sqlx.DB) *ChatPostgres {
 	return &ChatPostgres{db: db}
 }
 
-// GetConversation - метод получения беседы из бд
-func (r *ChatPostgres) GetConversation(name string) (conv *models.Conversation, err error) {
-	query := `
-        SELECT c.id, c.name, c.created_at, u.id as user_id, u.username, u.first_name, u.last_name, u.email, u.photo_id, u.path,
-               cm.entry_at, cm.release_at,
-               m.content, m.send_time
-        FROM chats c
-        LEFT JOIN conversation_members cm ON c.id = cm.chat_id
-        LEFT JOIN users u ON cm.user_id = u.id
-        LEFT JOIN messages m ON c.id = m.chat_id
-        WHERE c.name = $1
-    `
-
-	err = r.db.Get(&conv, query, name)
+// CreatePublicChat создает общую беседу
+func (c *ChatPostgres) CreatePublicChat(creatorID uint, name string) error {
+	chatID, err := c.CreateChat(publicTypeName)
 	if err != nil {
-		return nil, fmt.Errorf("error getting conversation: %v", err)
+		return fmt.Errorf("error creating public chat: %v", err)
 	}
 
-	return conv, nil
+	query := `
+		INSERT INTO public_chats (name, creation_date, creator_user_id, chat_id)
+		VALUES ($1, CURRENT_DATE, $2, $3)
+	`
+	_, err = c.db.Exec(query, name, creatorID, chatID)
+	if err != nil {
+		return fmt.Errorf("error creating public chat: %v", err)
+	}
+
+	err = c.CreateChatMember(creatorID, chatID)
+	if err != nil {
+		return fmt.Errorf("error creating public chat: %v", err)
+	}
+
+	return nil
 }
 
-// GetMessage -
-func (r *ChatPostgres) GetMessage(messId uint) (*models.Message, error) {
-	query := `
-        SELECT m.id, m.content, m.send_time 
-        FROM messages m
-        WHERE m.id = $1
-    `
-
-	var message *models.Message
-
-	err := r.db.Select(&message, query, messId)
+// CreatePrivateChat создает личные сообщения
+func (c *ChatPostgres) CreatePrivateChat(user1ID, user2ID uint) error {
+	chatID, err := c.CreateChat(privateTypeName)
 	if err != nil {
-		return nil, fmt.Errorf("error getting message: %v", err)
+		return fmt.Errorf("error creating private chat: %v", err)
 	}
 
-	return message, nil
+	query := `
+		INSERT INTO private_chats (user1_id, user2_id, chat_id)
+		VALUES ($1, $2, $3)
+	`
+	_, err = c.db.Exec(query, user1ID, user2ID, chatID)
+	if err != nil {
+		return fmt.Errorf("error creating private chat: %v", err)
+	}
+
+	return nil
 }
 
-// GetMessages - метод получения сообщений беседы из базы данных.
-func (r *ChatPostgres) GetMessages(convID uint) ([]*models.Message, error) {
+// CreateChat создает общий чат в таблице chats
+func (c *ChatPostgres) CreateChat(chatType string) (uint, error) {
 	query := `
-        SELECT m.content, m.send_time, u.id, u.username, u.first_name, u.last_name, u.email, u.photo_id, u.path
-        FROM messages m
-        JOIN users u ON m.user_id = u.id
-        WHERE m.chat_id = $1
-    `
+		INSERT INTO chats (type_name)
+		VALUES ($1)
+		RETURNING id
+	`
 
-	var messages []*models.Message
-
-	err := r.db.Select(&messages, query, convID)
+	var chatID uint
+	err := c.db.Get(&chatID, query, chatType)
 	if err != nil {
-		return nil, fmt.Errorf("error getting messages: %v", err)
+		return 0, fmt.Errorf("error creating chat: %v", err)
 	}
 
-	return messages, nil
+	return chatID, nil
 }
 
-// GetConversationMember - метод для получения участников беседы из базы данных.
-func (r *ChatPostgres) GetConversationMember(convID uint) ([]*models.ConversationMember, error) {
+// CreateChatMember добавляет пользователя к участникам публичной беседы
+func (c *ChatPostgres) CreateChatMember(userID, chatID uint) error {
 	query := `
-        SELECT u.id, u.username, u.first_name, u.last_name, u.email, u.photo_id, u.path
-        FROM conversation_members cm
-        JOIN users u ON cm.user_id = u.id
-        WHERE cm.chat_id = $1
-    `
-
-	var members []*models.ConversationMember
-
-	err := r.db.Select(&members, query, convID)
+		INSERT INTO chat_members (user_id, chat_id)
+		VALUES ($1, $2)
+	`
+	_, err := c.db.Exec(query, userID, chatID)
 	if err != nil {
-		return nil, fmt.Errorf("error getting conversation members: %v", err)
+		return fmt.Errorf("error create chat member: %v", err)
 	}
 
-	return members, nil
+	return nil
+}
+
+// GetPublicChats получить публичные чаты
+func (c *ChatPostgres) GetPublicChats() ([]models.Chat, error) {
+	query := `
+        SELECT pc.id, pc.name, pc.creation_date, pc.creator_user_id
+        FROM public_chats pc
+    `
+	var publicChats []models.Chat
+	if err := c.db.Select(&publicChats, query); err != nil {
+		return nil, fmt.Errorf("error getting public chats: %v", err)
+	}
+	return publicChats, nil
 }

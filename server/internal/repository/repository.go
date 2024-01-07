@@ -9,19 +9,23 @@ import (
 type User interface {
 	CreateUser(user *models.User) (uint, error)
 	CreateUserPhoto(userID uint, imageURLs []string) error
-	CreateContact(user1ID, user2ID uint) (contactID int, err error)
-	GetUser(email, password string) (user *models.User, err error)
-	GetUserByID(userID uint) (user *models.User, err error)
+	CreateContact(user1ID, user2ID string) error
+
+	GetUserByEmail(email, password string) (models.User, error)
+	GetUserByID(userID uint) (models.User, error)
+
+	GetUsers() ([]models.Contact, error)
+
 	GetUserPhotosByUserID(userID uint) ([]string, error)
 	GetContactsIDsByUserID(userID uint) ([]uint, error)
-	GetContactsByUserID(userID uint) ([]*models.User, error)
+	GetContactsByUserID(userID uint) ([]models.Contact, error)
 }
 
 // Chat - интерфейс для взаимодействия с данными бесед и сообщений в базе данных.
 type Chat interface {
-	GetConversation(name string) (conv *models.Conversation, err error)
-	GetMessages(convID uint) ([]*models.Message, error)
-	GetConversationMember(convID uint) ([]*models.ConversationMember, error)
+	CreatePublicChat(creatorID uint, name string) error
+	CreatePrivateChat(user1ID, user2ID uint) error
+	CreateChatMember(userID, chatID uint) error
 }
 
 // Repository - структура, объединяющая различные репозитории для работы с данными.

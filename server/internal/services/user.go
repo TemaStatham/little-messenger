@@ -42,7 +42,7 @@ func (a *UserService) CreateUser(user *models.User) (uint, error) {
 
 // GenerateToken генерирует аутентификационный токен для указанного email и пароля.
 func (a *UserService) GenerateToken(email, password string) (string, error) {
-	user, err := a.repo.GetUser(email, generatePasswordHash(password))
+	user, err := a.repo.GetUserByEmail(email, generatePasswordHash(password))
 	if err != nil {
 		return "", err
 	}
@@ -79,9 +79,53 @@ func (a *UserService) ParseToken(accessToken string) (uint, error) {
 	return claims.ID, nil
 }
 
+// GetUserByEmail извлекает пользователя по его параметрам.
+func (a *UserService) GetUserByEmail(email, password string) (models.User, error) {
+
+	user, err := a.repo.GetUserByEmail(email, generatePasswordHash(password))
+	if err != nil {
+		return models.User{}, err
+	}
+
+	photos, err := a.repo.GetUserPhotosByUserID(user.ID)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	user.ImageURLs = photos
+
+	contacts, err := a.repo.GetContactsByUserID(user.ID)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	user.Contacts = contacts
+
+	return user, nil
+}
+
 // GetUserByID извлекает пользователя по его идентификатору.
-func (a *UserService) GetUserByID(userID uint) (*models.User, error) {
-	return a.repo.GetUserByID(userID)
+func (a *UserService) GetUserByID(userID uint) (models.User, error) {
+	user, err := a.repo.GetUserByID(userID)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	photos, err := a.repo.GetUserPhotosByUserID(user.ID)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	user.ImageURLs = photos
+
+	contacts, err := a.repo.GetContactsByUserID(user.ID)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	user.Contacts = contacts
+
+	return user, nil
 }
 
 // generatePasswordHash генерирует SHA-1 хэш для предоставленного пароля.
@@ -90,4 +134,14 @@ func generatePasswordHash(password string) string {
 	hash.Write([]byte(password))
 
 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
+}
+
+// GetUsers получает всех пользователей зарегестрированных в бд
+func (a *UserService) GetUsers() ([]models.Contact, error) {
+	return a.repo.GetUsers()
+}
+
+// CreateContact создает контакт
+func (a *UserService) CreateContact(userID1 string, userID2 string) error {
+	return a.repo.CreateContact(userID1, userID2)
 }

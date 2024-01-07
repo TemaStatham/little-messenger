@@ -3,19 +3,20 @@ import { SideBar } from './sideBar/SideBar';
 import { ChatConteiner } from './chatContainer/ChatConteiner';
 import { useEffect, useState } from 'react';
 import { Endpoints } from '../../Endpoints';
+import { User } from './User';
 
 export const ChatComponent: React.FC = () => {
-  // const [user, setUser] = useState(null);
-  const [chats, setChats] = useState<string[]>([]);
+  const [user, setUser] = useState<User | null>(null);
 
   const ws = new WebSocket(Endpoints.ws);
+  useEffect(() => {
+    console.log('UserProfile был обновлен. Новые данные пользователя:', user);
+  }, [user]);
 
   useEffect(() => {
     const checkTokenValidity = async (ws: WebSocket) => {
-      // Получение токена из localStorage
       const token = localStorage.getItem('token');
       if (!token) {
-        // Токен отсутствует - пользователь не аутентифицирован
         console.log('Токен отсутствует - пользователь не аутентифицирован');
         return;
       }
@@ -23,31 +24,33 @@ export const ChatComponent: React.FC = () => {
       ws.onopen = () => {
         ws.send(
           JSON.stringify({
-            clientID: localStorage.getItem('token'),
-            chatID: '',
+            clientID: token,
             type: 'auth',
+            chatID: '',
             content: '',
           }),
         );
       };
-
       ws.onmessage = (event) => {
         console.log(event.data);
-        setChats(event.data.Chat);
+        const data = JSON.parse(event.data);
+        if (data.user) {
+          setUser(data.user);
+        }
       };
     };
 
     checkTokenValidity(ws);
   }, []);
 
-  // if (user) {
-  //   console.log(user, chats);
-  // }
+  if (!user) {
+    return <></>;
+  }
 
   return (
     <div className={styles.chat_background}>
-      <SideBar chats={chats} />
-      <ChatConteiner />
+      <SideBar setUser={setUser} user={user} ws={ws} />
+      <ChatConteiner setUser={setUser} user={user} />
     </div>
   );
 };

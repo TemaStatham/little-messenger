@@ -50,8 +50,15 @@ func (h *Handler) signIn(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+	// user, err := h.services.GetUserByEmail(input.Email, input.Password)
+	// if err != nil {
+	// 	newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	// 	return
+	// }
+	//u := *user
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"token": token,
+		//"user":  u,
 	})
 }

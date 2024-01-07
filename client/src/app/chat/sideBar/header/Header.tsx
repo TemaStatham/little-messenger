@@ -1,8 +1,13 @@
 import styles from './Header.module.css';
 import { useState } from 'react';
 import { Settings } from './settings/Settings';
+import { CounterState } from './../States';
 
-export const Header = () => {
+type HeaderProps = {
+  handleState: (state: CounterState) => void;
+};
+
+export const Header = (props: HeaderProps) => {
   const [popup, setPopup] = useState(true);
 
   return (
@@ -15,7 +20,11 @@ export const Header = () => {
           }}
         ></div>
       ) : (
-        <Settings popup={popup} setPopup={setPopup} />
+        <Settings
+          popup={popup}
+          setPopup={setPopup}
+          handleState={props.handleState}
+        />
       )}
 
       <div className={styles.header__form}>
