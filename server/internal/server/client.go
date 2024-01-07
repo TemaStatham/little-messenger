@@ -3,7 +3,6 @@ package server
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -75,7 +74,7 @@ func (c *Client) recognizeMessage(message []byte) {
 		return
 	}
 	c.clientID = userID
-	fmt.Print(userID)
+	
 	switch parsedMessage.Type {
 	case "auth":
 		user, err := c.services.GetUserByID(c.clientID)
@@ -117,8 +116,20 @@ func (c *Client) recognizeMessage(message []byte) {
 			log.Println(err.Error())
 			return
 		}
+		chats, err := c.services.GetChatsByUserID(userID)
+		if err != nil {
+			log.Printf("%v\n", err)
+			return
+		}
+		conversations, err := c.services.GetConversationsByUserID(userID)
+		if err != nil {
+			log.Printf("%v\n", err)
+			return
+		}
 		jsonData, err := json.Marshal(map[string]interface{}{
 			"user": user,
+			"chats":         chats,
+			"conversations": conversations,
 		})
 		if err != nil {
 			log.Println("ошибка при маршалинге в JSON:", err)
@@ -137,9 +148,21 @@ func (c *Client) recognizeMessage(message []byte) {
 			log.Println("error recognize messages get users: ", err)
 			return
 		}
+		chats, err := c.services.GetChatsByUserID(userID)
+		if err != nil {
+			log.Printf("%v\n", err)
+			return
+		}
+		conversations, err := c.services.GetConversationsByUserID(userID)
+		if err != nil {
+			log.Printf("%v\n", err)
+			return
+		}
 		jsonData, err := json.Marshal(map[string]interface{}{
 			"user":  user,
 			"users": users,
+			"chats":         chats,
+			"conversations": conversations,
 		})
 		if err != nil {
 			log.Println("ошибка при маршалинге в JSON: ", err)
@@ -158,9 +181,21 @@ func (c *Client) recognizeMessage(message []byte) {
 			log.Printf("%v\n", err)
 			return
 		}
+		chats, err := c.services.GetChatsByUserID(userID)
+		if err != nil {
+			log.Printf("%v\n", err)
+			return
+		}
+		conversations, err := c.services.GetConversationsByUserID(userID)
+		if err != nil {
+			log.Printf("%v\n", err)
+			return
+		}
 		jsonData, err := json.Marshal(map[string]interface{}{
 			"status": "contact create success",
 			"user":   user,
+			"chats":         chats,
+			"conversations": conversations,
 		})
 		if err != nil {
 			log.Println("ошибка при маршалинге в JSON: ", err)
@@ -170,6 +205,7 @@ func (c *Client) recognizeMessage(message []byte) {
 		break
 	default:
 		log.Printf("unknown message type: %s", parsedMessage.ClientID)
+		break
 	}
 }
 

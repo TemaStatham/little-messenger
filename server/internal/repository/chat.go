@@ -139,9 +139,11 @@ func (c *ChatPostgres) GetChatMessages(chatID uint) ([]models.Message, error) {
         FROM messages
         WHERE chat_id = $1
     `
+	
 	var messages []models.Message
 	if err := c.db.Select(&messages, query, chatID); err != nil {
 		return nil, fmt.Errorf("error getting chat messages: %v", err)
 	}
+
 	return messages, nil
 }
