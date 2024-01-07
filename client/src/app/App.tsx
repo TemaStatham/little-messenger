@@ -115,17 +115,17 @@ const App: React.FC = () => {
   }, []);
 
   // Если пользовтель не аутентифицирован или данные загружаются, показываем Auth
-  if (user == null || loading) {
+  if (!user || loading) {
     // Искусственная задержка в 1 секунду перед отображением Auth
     setTimeout(() => {
       return <Auth />;
     }, 1000);
   }
 
-  if (user) {
-    return (
-      <BrowserRouter>
-        <Routes>
+  return (
+    <BrowserRouter>
+      <Routes>
+        {user ? (
           <Route
             path="/"
             element={
@@ -136,11 +136,11 @@ const App: React.FC = () => {
               />
             }
           />
-          <Route path="/auth" element={<Auth />} />
-        </Routes>
-      </BrowserRouter>
-    );
-  }
+        ) : null}
+        <Route path="/auth" element={<Auth />} />
+      </Routes>
+    </BrowserRouter>
+  );
 };
 
 export default App;

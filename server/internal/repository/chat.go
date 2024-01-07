@@ -30,8 +30,8 @@ func (c *ChatPostgres) CreatePublicChat(creatorID uint, name string) error {
 	}
 
 	query := `
-		INSERT INTO public_chats (name, creation_date, creator_user_id, chat_id)
-		VALUES ($1, CURRENT_DATE, $2, $3)
+		INSERT INTO public_chats (name, creation_date, creator_user_id, chat_id, img)
+		VALUES ($1, CURRENT_DATE, $2, $3, 'default')
 	`
 	_, err = c.db.Exec(query, name, creatorID, chatID)
 	if err != nil {
@@ -99,7 +99,7 @@ func (c *ChatPostgres) CreateChatMember(userID, chatID uint) error {
 // GetUserPublicChats получает публичные чаты, в которых участвует пользователь
 func (c *ChatPostgres) GetUserPublicChats(userID uint) ([]models.Conversation, error) {
 	query := `
-        SELECT pc.chat_id as chat_id, pc.name as name, pc.creation_date as creation_date, pc.creator_user_id as creator_user_id
+        SELECT pc.chat_id as chat_id, pc.name as name, pc.creation_date as creation_date, pc.creator_user_id as creator_user_id, pc.img as img
         FROM public_chats pc
         JOIN users u ON pc.creator_user_id = u.id
         WHERE u.id = $1
@@ -110,42 +110,24 @@ func (c *ChatPostgres) GetUserPublicChats(userID uint) ([]models.Conversation, e
 		return nil, fmt.Errorf("error getting user public chats: %v", err)
 	}
 
-	// Заполнение Messages нужно добавить в зависимости от вашей логики,
-	// например, может потребоваться получить сообщения для каждого чата
-	// for i := range userPublicChats {
-	// 	messages, err := c.GetChatMessages(userPublicChats[i].ID)
-	// 	if err != nil {
-	// 		return nil, fmt.Errorf("error getting chat messages: %v", err)
-	// 	}
-	// 	userPublicChats[i].Messages = messages
-	// }
-
 	return userPublicChats, nil
 }
 
 // GetUserPrivateChats получает личные чаты, в которых участвует пользователь
 func (c *ChatPostgres) GetUserPrivateChats(userID uint) ([]models.Chat, error) {
 	query := `
-        SELECT pc.chat_id as chat_id
+        SELECT pc.chat_id as chat_id, u2.id as user_id, u2.username as username, up.path as userphoto
         FROM private_chats pc
         JOIN users u1 ON pc.user1_id = u1.id
         JOIN users u2 ON pc.user2_id = u2.id
-        WHERE u1.id = $1 OR u2.id = $1
+		JOIN user_photos up ON up.user_id = u2.id 
+        WHERE u1.id = $1
     `
+
 	var userPrivateChats []models.Chat
 	if err := c.db.Select(&userPrivateChats, query, userID); err != nil {
 		return nil, fmt.Errorf("error getting user private chats: %v", err)
 	}
-
-	// Заполнение Messages нужно добавить в зависимости от вашей логики,
-	// например, может потребоваться получить сообщения для каждого чата
-	// for i := range userPrivateChats {
-	// 	messages, err := c.GetChatMessages(userPrivateChats[i].ID)
-	// 	if err != nil {
-	// 		return nil, fmt.Errorf("error getting chat messages: %v", err)
-	// 	}
-	// 	userPrivateChats[i].Messages = messages
-	// }
 
 	return userPrivateChats, nil
 }

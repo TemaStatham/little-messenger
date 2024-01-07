@@ -3,6 +3,7 @@ package server
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -74,7 +75,7 @@ func (c *Client) recognizeMessage(message []byte) {
 		return
 	}
 	c.clientID = userID
-
+	fmt.Print(userID)
 	switch parsedMessage.Type {
 	case "auth":
 		user, err := c.services.GetUserByID(c.clientID)
@@ -93,8 +94,8 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		jsonData, err := json.Marshal(map[string]interface{}{
-			"user": user,
-			"chats": chats,
+			"user":          user,
+			"chats":         chats,
 			"conversations": conversations,
 		})
 		if err != nil {
@@ -102,6 +103,7 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		c.send <- jsonData
+		break
 	case "send":
 		break
 	case "create chat":

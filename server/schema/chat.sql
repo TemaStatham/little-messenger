@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS public_chats (
     name VARCHAR(255) NOT NULL,
     creation_date DATE NOT NULL,
     creator_user_id INT NOT NULL,
+    img VARCHAR(255) NOT NULL,
     chat_id INT NOT NULL,
     FOREIGN KEY (creator_user_id) REFERENCES users(id),
     FOREIGN KEY (chat_id) REFERENCES chats(id)

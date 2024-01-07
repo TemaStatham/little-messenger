@@ -6,6 +6,7 @@ import "time"
 type Conversation struct {
 	ID        uint      `json:"chat_id" db:"chat_id"`
 	Name      string    `json:"name" db:"name"`
+	Img       string    `json:"img" db:"img"`
 	Creator   uint      `json:"creator" db:"creator_user_id"`
 	CreatedAt time.Time `json:"createdAt" db:"creation_date"`
 	Users     []Contact `json:"users" db:"-"`
@@ -14,10 +15,11 @@ type Conversation struct {
 
 // Chat : личные сообщения
 type Chat struct {
-	ID       uint      `json:"chat_id" db:"chat_id"`
-	User1    Contact   `json:"user1" db:"-"`
-	User2    Contact   `json:"user2" db:"-"`
-	Messages []Message `json:"messages" db:"-"`
+	ID        uint      `json:"chat_id" db:"chat_id"`
+	UserID    uint      `json:"userID" db:"user_id"`
+	Username  string    `json:"username" db:"username"`
+	Userphoto string    `json:"userphoto" db:"userphoto"`
+	Messages  []Message `json:"messages" db:"-"`
 }
 
 // Message : сообщение
@@ -27,4 +29,3 @@ type Message struct {
 	Content  string    `json:"content" db:"content"`
 	SendTime time.Time `json:"sendTime" db:"send_time"`
 }
-
