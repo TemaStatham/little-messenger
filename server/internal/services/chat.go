@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/TemaStatham/Little-Messenger/internal/models"
 	"github.com/TemaStatham/Little-Messenger/internal/repository"
 )
 
@@ -34,7 +35,17 @@ func (c *ChatService) CreateChatMember(userID, chatID uint) error {
 // 	return c.repo.GetConversation(name)
 // }
 
-// // GetConversationsByUserID возвращает все чаты, в которых участвует пользователь, по его идентификатору.
-// func (c *ChatService) GetConversationsByUserID(userID uint) (chats []*models.Chat, err error) {
-// 	return c.repo.GetConversationsByUserID(userID)
-// }
+// GetConversationsByUserID возвращает все чаты, в которых участвует пользователь, по его идентификатору.
+func (c *ChatService) GetConversationsByUserID(userID uint) ([]models.Conversation, error) {
+	return c.repo.GetUserPublicChats(userID)
+}
+
+// GetChatsByUserID возвращает все личные беседы, в которых участвует пользователь, по его идентификатору.
+func(c *ChatService) GetChatsByUserID(userID uint) ([]models.Chat, error) {
+	return c.repo.GetUserPrivateChats(userID)
+}
+
+// GetChatMessages возвращает все сообщения чата
+func (c *ChatService) GetChatMessages(chatID uint) ([]models.Message, error) {
+	return c.repo.GetChatMessages(chatID)
+}

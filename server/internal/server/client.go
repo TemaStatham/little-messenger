@@ -75,14 +75,13 @@ func (c *Client) recognizeMessage(message []byte) {
 	}
 	c.clientID = userID
 
-	user, err := c.services.GetUserByID(c.clientID)
-	if err != nil {
-		log.Printf("%v\n", err)
-		return
-	}
-
 	switch parsedMessage.Type {
 	case "auth":
+		user, err := c.services.GetUserByID(c.clientID)
+		if err != nil {
+			log.Printf("%v\n", err)
+			return
+		}
 		jsonData, err := json.Marshal(map[string]interface{}{
 			"user": user,
 		})
@@ -94,7 +93,12 @@ func (c *Client) recognizeMessage(message []byte) {
 	case "send":
 		break
 	case "create chat":
-		err := c.services.CreatePublicChat(user.ID, parsedMessage.ChatID)
+		user, err := c.services.GetUserByID(c.clientID)
+		if err != nil {
+			log.Printf("%v\n", err)
+			return
+		}
+		err = c.services.CreatePublicChat(user.ID, parsedMessage.ChatID)
 		if err != nil {
 			log.Println(err.Error())
 			return
@@ -109,6 +113,11 @@ func (c *Client) recognizeMessage(message []byte) {
 		c.send <- jsonData
 		break
 	case "get users":
+		user, err := c.services.GetUserByID(c.clientID)
+		if err != nil {
+			log.Printf("%v\n", err)
+			return
+		}
 		users, err := c.services.GetUsers()
 		if err != nil {
 			log.Println("error recognize messages get users: ", err)
@@ -125,7 +134,7 @@ func (c *Client) recognizeMessage(message []byte) {
 		c.send <- jsonData
 		break
 	case "create contact":
-		err := c.services.CreateContact(strconv.FormatUint(uint64(user.ID), 10), parsedMessage.Content)
+		err := c.services.CreateContact(strconv.FormatUint(uint64(userID), 10), parsedMessage.Content)
 		if err != nil {
 			log.Println("не удалось создать контакт: ", err)
 			return

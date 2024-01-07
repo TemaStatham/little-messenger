@@ -96,15 +96,71 @@ func (c *ChatPostgres) CreateChatMember(userID, chatID uint) error {
 	return nil
 }
 
-// GetPublicChats получить публичные чаты
-func (c *ChatPostgres) GetPublicChats() ([]models.Chat, error) {
+// GetUserPublicChats получает публичные чаты, в которых участвует пользователь
+func (c *ChatPostgres) GetUserPublicChats(userID uint) ([]models.Conversation, error) {
 	query := `
-        SELECT pc.id, pc.name, pc.creation_date, pc.creator_user_id
+        SELECT pc.chat_id, pc.name, pc.creation_date, u.id as creator_id, u.username as creator_username
         FROM public_chats pc
+        JOIN chat_members cm ON pc.chat_id = cm.chat_id
+        JOIN users u ON pc.creator_user_id = u.id
+        WHERE cm.user_id = $1
     `
-	var publicChats []models.Chat
-	if err := c.db.Select(&publicChats, query); err != nil {
-		return nil, fmt.Errorf("error getting public chats: %v", err)
+	var userPublicChats []models.Conversation
+	if err := c.db.Select(&userPublicChats, query, userID); err != nil {
+		return nil, fmt.Errorf("error getting user chats: %v", err)
 	}
-	return publicChats, nil
+
+	// Заполнение Messages нужно добавить в зависимости от вашей логики,
+	// например, может потребоваться получить сообщения для каждого чата
+	// for i := range userPublicChats {
+	// 	messages, err := c.GetChatMessages(userPublicChats[i].ID)
+	// 	if err != nil {
+	// 		return nil, fmt.Errorf("error getting chat messages: %v", err)
+	// 	}
+	// 	userPublicChats[i].Messages = messages
+	// }
+
+	return userPublicChats, nil
+}
+
+// GetUserPrivateChats получает личные чаты, в которых участвует пользователь
+func (c *ChatPostgres) GetUserPrivateChats(userID uint) ([]models.Chat, error) {
+	query := `
+        SELECT pc.chat_id, u1.id as user1_id, u1.username as user1_username,
+               u2.id as user2_id, u2.username as user2_username
+        FROM private_chats pc
+        JOIN users u1 ON pc.user1_id = u1.id
+        JOIN users u2 ON pc.user2_id = u2.id
+        WHERE u1.id = $1 OR u2.id = $1
+    `
+	var userPrivateChats []models.Chat
+	if err := c.db.Select(&userPrivateChats, query, userID); err != nil {
+		return nil, fmt.Errorf("error getting user private chats: %v", err)
+	}
+
+	// Заполнение Messages нужно добавить в зависимости от вашей логики,
+	// например, может потребоваться получить сообщения для каждого чата
+	// for i := range userPrivateChats {
+	// 	messages, err := c.GetChatMessages(userPrivateChats[i].ID)
+	// 	if err != nil {
+	// 		return nil, fmt.Errorf("error getting chat messages: %v", err)
+	// 	}
+	// 	userPrivateChats[i].Messages = messages
+	// }
+
+	return userPrivateChats, nil
+}
+
+// GetChatMessages получает сообщения для указанного чата
+func (c *ChatPostgres) GetChatMessages(chatID uint) ([]models.Message, error) {
+	query := `
+        SELECT id, user_id, content, send_time
+        FROM messages
+        WHERE chat_id = $1
+    `
+	var messages []models.Message
+	if err := c.db.Select(&messages, query, chatID); err != nil {
+		return nil, fmt.Errorf("error getting chat messages: %v", err)
+	}
+	return messages, nil
 }

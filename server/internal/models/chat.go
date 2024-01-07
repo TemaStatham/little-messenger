@@ -6,7 +6,7 @@ import "time"
 type Conversation struct {
 	ID        uint      `json:"id"`
 	Name      string    `json:"name"`
-	Creator   User      `json:"creator"`
+	Creator   uint      `json:"creator"`
 	CreatedAt time.Time `json:"createdAt"`
 	Users     []User    `json:"users"`
 	Messages  []Message `json:"messages"`
