@@ -6,12 +6,14 @@ import { CounterState } from './States';
 import { AddContactComponent } from './popups/addContact/AddContact';
 import { CreateChatComponent } from './popups/createChat/CreateChat';
 import { ShowContactsComponent } from './popups/showContact/ShowContact';
-import { User } from '../../User';
+import { User } from '../../../types/User';
+import { Data } from '../../../types/Data';
+import { ContactType } from '../../../types/User';
 
 type SideBarProps = {
-  ws: WebSocket;
-  user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  user: User;
+  handleEvent: (data: Data) => void;
+  contacts: ContactType[];
 };
 
 export const SideBar = (props: SideBarProps) => {
@@ -20,24 +22,20 @@ export const SideBar = (props: SideBarProps) => {
     setState(state);
   };
 
-  if (props.user == null) {
-    return <></>;
-  }
-
   return (
     <div className={styles.side_bar}>
       {state === CounterState.CreateChat && (
         <CreateChatComponent
+          handleEvent={props.handleEvent}
           user={props.user}
-          ws={props.ws}
           handleState={handleState}
         />
       )}
       {state === CounterState.AddContact && (
         <AddContactComponent
-          setUser={props.setUser}
-          ws={props.ws}
           handleState={handleState}
+          handleEvent={props.handleEvent}
+          contacts={props.contacts}
         />
       )}
       {state === CounterState.ShowContacts && (

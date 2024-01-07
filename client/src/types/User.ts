@@ -1,11 +1,18 @@
-export interface User {
-  age: number;
-  googleImgae: string;
+export type User = {
+  id: string;
+  username: string;
   firstName: string;
   lastName: string;
-  userName: string;
   email: string;
   password: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+  imageURL: string | null;
+  contacts: ContactType[];
+};
+
+export type ContactType = {
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+};

@@ -1,12 +1,13 @@
 import styles from './CreateChat.module.css';
 import { CounterState } from '../../States';
-import { User } from '../../../../User';
+import { User } from '../../../../../types/User';
 import { useState } from 'react';
+import { Data } from '../../../../../types/Data';
 
 type CreateChatComponentProps = {
   handleState: (state: CounterState) => void;
-  ws: WebSocket;
   user: User;
+  handleEvent: (data: Data) => void;
 };
 
 export const CreateChatComponent = (props: CreateChatComponentProps) => {
@@ -34,16 +35,13 @@ export const CreateChatComponent = (props: CreateChatComponentProps) => {
           className={styles.confirm}
           onClick={() => {
             props.handleState(CounterState.Null);
-            props.ws.send(
-              JSON.stringify({
-                type: 'create chat',
-                clientID: localStorage.getItem('token'),
-                chatID: chatName,
-              }),
-            );
-            props.ws.onmessage = (event) => {
-              console.log(event.data);
-            };
+            props.handleEvent({
+              status: 'create chat',
+              token: '',
+              clientID: '',
+              content: '',
+              chatId: `${chatName}`,
+            });
           }}
         >
           Подтвердить

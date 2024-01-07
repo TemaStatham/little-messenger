@@ -3,11 +3,10 @@ import { Form } from './form/Form';
 import { OutgoingBlock } from './outgoingBlock/OutgoingBlock';
 import { Messages } from './messages/Messagex';
 import { Header } from './header/Header';
-import { User } from '../../User';
+import { User } from '../../../types/User';
 
 type ChatConteinerProps = {
   user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
 };
 
 export const ChatConteiner = (props: ChatConteinerProps) => {

@@ -1,5 +1,5 @@
 import styles from './Contacts.module.css';
-import { User } from '../../../User';
+import { User } from '../../../../types/User';
 type ContactsProps = {
   user: User;
 };

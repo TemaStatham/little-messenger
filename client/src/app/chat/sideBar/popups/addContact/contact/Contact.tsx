@@ -1,16 +1,12 @@
 import styles from './Contact.module.css';
 import { CounterState } from '../../../States';
-import { User } from '../../../../../User';
+import { ContactType } from '../../../../../../types/User';
+import { Data } from '../../../../../../types/Data';
 
 type ContactProps = {
-  id: string;
-  username: string;
-  fname: string;
-  lname: string;
-  email: string;
+  contact: ContactType;
   handleState: (state: CounterState) => void;
-  ws: WebSocket;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  handleEvent: (data: Data) => void;
 };
 
 export const Contact = (props: ContactProps) => {
@@ -18,26 +14,24 @@ export const Contact = (props: ContactProps) => {
     <div
       className={styles.contact}
       onClick={() => {
-        props.ws.send(
-          JSON.stringify({
-            clientID: localStorage.getItem('token'),
-            type: 'create contact',
-            chatID: '',
-            content: `${props.id}`,
-          }),
-        );
-        props.ws.onmessage = (event) => {
-          console.log(event.data);
-
-          if (event.data.user) {
-            props.setUser(event.data.user);
-          }
-          //window.location.reload();
-        };
+        props.handleEvent({
+          status: 'create contact',
+          token: '',
+          clientID: '',
+          content: `${props.contact.id}`,
+          chatId: '',
+        });
+        props.handleEvent({
+          status: 'reset contacts',
+          token: '',
+          clientID: '',
+          content: '',
+          chatId: '',
+        });
         props.handleState(CounterState.Null);
       }}
     >
-      {props.id}
+      {props.contact.id}
     </div>
   );
 };

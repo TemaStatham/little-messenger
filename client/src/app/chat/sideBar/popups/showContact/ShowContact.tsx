@@ -1,6 +1,6 @@
 import styles from './ShowContact.module.css';
 import { CounterState } from '../../States';
-import { User } from '../../../../User';
+import { User } from '../../../../../types/User';
 
 type ShowContactsComponentProps = {
   handleState: (state: CounterState) => void;
