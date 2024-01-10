@@ -1,7 +1,7 @@
 import styles from './SideBar.module.css';
 import { useState } from 'react';
-import { Contacts } from './contacts/Contacts';
-import { Header } from './header/Header';
+import { ChatsComponent } from './chats/Chats';
+import { HeaderComponent } from './header/Header';
 import { CounterState } from './States';
 import { AddContactComponent } from './popups/addContact/AddContact';
 import { CreateChatComponent } from './popups/createChat/CreateChat';
@@ -9,11 +9,14 @@ import { ShowContactsComponent } from './popups/showContact/ShowContact';
 import { User } from '../../../types/User';
 import { Data } from '../../../types/Data';
 import { ContactType } from '../../../types/User';
+import { Chat } from '../../../types/Chats';
 
 type SideBarProps = {
   user: User;
-  handleEvent: (data: Data) => void;
   contacts: ContactType[];
+  chats: Chat[];
+  handleEvent: (data: Data) => void;
+  handleChat: (c: Chat) => void;
 };
 
 export const SideBar = (props: SideBarProps) => {
@@ -42,10 +45,14 @@ export const SideBar = (props: SideBarProps) => {
         <ShowContactsComponent user={props.user} handleState={handleState} />
       )}
       <div className={styles.side_bar__header}>
-        <Header handleState={handleState} />
+        <HeaderComponent handleState={handleState} />
       </div>
       <div className={styles.side_bar__list}>
-        <Contacts user={props.user} />
+        <ChatsComponent
+          handleEvent={props.handleEvent}
+          handleChat={props.handleChat}
+          chats={props.chats}
+        />
       </div>
     </div>
   );

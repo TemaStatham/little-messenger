@@ -21,6 +21,7 @@ type Chat interface {
 	CreateChatMember(userID, chatID uint) error
 	CreatePrivateChat(user1ID, user2ID uint) error
 	CreatePublicChat(creatorID uint, name string) error
+	SendMessage(content string, userID, chatID uint) error
 	GetConversationsByUserID(userID uint) ([]models.Conversation, error)
 	GetChatsByUserID(userID uint) ([]models.Chat, error)
 	GetChatMessages(chatID uint) ([]models.Message, error)

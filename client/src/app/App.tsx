@@ -1,14 +1,17 @@
-import { ChatComponent } from './chat/ChatComponent';
+import { ChatApp } from './chat/ChatApp';
 import { Auth } from './auth/Auth';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Endpoints } from '../Endpoints';
 import { ContactType, User } from '../types/User';
 import { Data } from '../types/Data';
 import { useState, useEffect } from 'react';
+import { Chat, Message } from '../types/Chats';
 
 const checkTokenValidity = async (
   ws: WebSocket,
   setUser: (u: User | null) => void,
+  setChats: (c: Chat[]) => void,
+  setMessages: (m: Message[]) => void,
 ) => {
   const token = localStorage.getItem('token');
   if (!token) {
@@ -27,18 +30,23 @@ const checkTokenValidity = async (
     );
   };
   ws.onmessage = (event) => {
-    console.log(event.data);
     const data = JSON.parse(event.data);
     if (data.user) {
       setUser(data.user);
+      setMessages([]);
+    }
+    if (data.conversations) {
+      setChats(data.conversations);
+      setMessages([]);
     }
     return;
   };
-  setUser(null);
 };
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [contacts, setContacts] = useState<ContactType[]>([]);
   const [loading, setIsLoading] = useState<boolean>(false);
   const ws = new WebSocket(Endpoints.ws);
@@ -51,14 +59,14 @@ const App: React.FC = () => {
             clientID: localStorage.getItem('token'),
             type: 'create chat',
             chatID: data.chatId,
-            content: ``,
+            content: data.chatId,
           }),
         );
         ws.onmessage = (event) => {
           console.log(event.data);
           const data = JSON.parse(event.data);
-          const user = data.user as User;
-          setUser(user);
+          if (data.user) setUser(data.user);
+          if (data.conversations) setChats(data.conversations);
         };
         return;
       case 'create contact':
@@ -95,6 +103,38 @@ const App: React.FC = () => {
           setContacts(users);
         };
         return;
+      case 'get messages':
+        ws.send(
+          JSON.stringify({
+            clientID: localStorage.getItem('token'),
+            type: 'get messages',
+            chatID: data.chatId,
+            content: '',
+          }),
+        );
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          const messages = data.messages as Message[];
+          setMessages(messages);
+          console.log(messages);
+        };
+        return;
+      case 'send':
+        ws.send(
+          JSON.stringify({
+            clientID: localStorage.getItem('token'),
+            type: 'send',
+            chatID: data.chatId,
+            content: data.content,
+          }),
+        );
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          const messages = data.messages as Message[];
+          setMessages(messages);
+          console.log(messages);
+        };
+        return;
       default:
         console.log('Неизвестный статус - ', data.status);
     }
@@ -104,22 +144,26 @@ const App: React.FC = () => {
     setUser(u);
   };
 
+  const updateChats = (c: Chat[]) => {
+    setChats(c);
+  };
+
+  const updateMessages = (m: Message[]) => {
+    setMessages(m);
+  };
+
   useEffect(() => {
     const checkAuth = async () => {
-      await checkTokenValidity(ws, updateUser);
-      setIsLoading(false);
+      await checkTokenValidity(ws, updateUser, updateChats, updateMessages);
     };
+    checkAuth();
     return () => {
-      checkAuth();
+      setIsLoading(false);
     };
   }, []);
 
-  // Если пользовтель не аутентифицирован или данные загружаются, показываем Auth
-  if (!user || loading) {
-    // Искусственная задержка в 1 секунду перед отображением Auth
-    setTimeout(() => {
-      return <Auth />;
-    }, 1000);
+  if (loading) {
+    return <div>Loading</div>;
   }
 
   return (
@@ -129,14 +173,31 @@ const App: React.FC = () => {
           <Route
             path="/"
             element={
-              <ChatComponent
+              <ChatApp
                 user={user}
                 handleEvent={handleEvent}
                 contacts={contacts}
+                chats={chats}
+                messages={messages}
               />
             }
           />
-        ) : null}
+        ) : (
+          <Route
+            path="/"
+            element={
+              <div>
+                <div
+                  onClick={() => {
+                    window.location.assign('http://localhost:3000/auth');
+                  }}
+                >
+                  Авторизироваться
+                </div>
+              </div>
+            }
+          />
+        )}
         <Route path="/auth" element={<Auth />} />
       </Routes>
     </BrowserRouter>

@@ -7,7 +7,7 @@ type HeaderProps = {
   handleState: (state: CounterState) => void;
 };
 
-export const Header = (props: HeaderProps) => {
+export const HeaderComponent = (props: HeaderProps) => {
   const [popup, setPopup] = useState(true);
 
   return (

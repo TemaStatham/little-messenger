@@ -18,12 +18,14 @@
 }
 
 .chat_conteiner__messages_field {
-  height: 90%;
-  min-height: 90%;
+  height: 80%;
+  min-height: 80%;
 }
 
 .chat_conteiner__outgoing_block {
 }
 
 .chat_conteiner__form {
+  height: 10%;
+  min-height: 10%;
 }

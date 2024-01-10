@@ -1,14 +1,4 @@
-.contacts {
-  width: 100%;
-  height: 100%;
-
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  flex-direction: column;
-}
-
-.contacts__contact {
+.chat_block {
   width: 95%;
   height: 10%;
 
@@ -21,7 +11,17 @@
   background-color: rgb(255, 255, 255, 0.4);
 }
 
-.contact {
+.chat_block:hover {
+  background-color: rgba(128, 128, 128, 0.4);
+  cursor: pointer;
+}
+
+.chat_block:active {
+  background-color: rgba(44, 44, 44, 0.4);
+  cursor: pointer;
+}
+
+.chat {
   width: 100%;
   height: 100%;
 
@@ -32,7 +32,7 @@
   justify-content: flex-start;
 }
 
-.contact__photo {
+.chat__photo {
   width: 14%;
   height: 80%;
 
@@ -42,7 +42,7 @@
   background-color: black;
 }
 
-.contact__text_block {
+.chat__text_block {
   display: flex;
   align-items: center;
   justify-content: space-around;

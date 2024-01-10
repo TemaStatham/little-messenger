@@ -96,6 +96,21 @@ func (c *ChatPostgres) CreateChatMember(userID, chatID uint) error {
 	return nil
 }
 
+// CreateMessage создаем сообщение вбазе данных
+func (c *ChatPostgres) CreateMessage(content string, userID, chatID uint) error {
+	query := `
+		INSERT INTO messages (content, user_id, chat_id, send_time)
+		VALUES ($1, $2, $3, CURRENT_DATE)
+	`
+
+	_, err := c.db.Exec(query, content, userID, chatID)
+	if err != nil {
+		return fmt.Errorf("error creating message: %v", err)
+	}
+
+	return nil
+}
+
 // GetUserPublicChats получает публичные чаты, в которых участвует пользователь
 func (c *ChatPostgres) GetUserPublicChats(userID uint) ([]models.Conversation, error) {
 	query := `
@@ -135,11 +150,18 @@ func (c *ChatPostgres) GetUserPrivateChats(userID uint) ([]models.Chat, error) {
 // GetChatMessages получает сообщения для указанного чата
 func (c *ChatPostgres) GetChatMessages(chatID uint) ([]models.Message, error) {
 	query := `
-        SELECT id, user_id, content, send_time
-        FROM messages
-        WHERE chat_id = $1
+        SELECT m.id, m.user_id, u.username as username, m.content as content, m.send_time as send_time
+        FROM messages m
+		JOIN users u ON u.id = m.user_id 
+        WHERE m.chat_id = $1
     `
-	
+
+	// SELECT m.id, m.user_id, u.username as username, up.path as photo, m.content as content, m.send_time as send_time
+	//     FROM messages m
+	// 	JOIN users u ON u.id = m.user_id
+	// 	JOIN user_photos up ON up.user_id = u.id
+	//     WHERE m.chat_id = $1
+
 	var messages []models.Message
 	if err := c.db.Select(&messages, query, chatID); err != nil {
 		return nil, fmt.Errorf("error getting chat messages: %v", err)

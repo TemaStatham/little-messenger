@@ -2,23 +2,41 @@ import { User } from './User';
 
 export type Message = {
   id: number;
-  sender: User;
+  userID: string;
+  username: string;
+  userPhoto: string;
   content: string;
   sendTime: Date;
 };
 
-export type Conversation = {
+export type PubChat = {
   id: number;
   name: string;
-  creator: User;
+  photo: string;
+  messages: Message[];
+
+  creator: number;
   createdAt: Date;
   users: User[];
+};
+
+export type PrivChat = {
+  id: number;
+  userName: string;
+  photo: string;
   messages: Message[];
+
+  userID: number;
 };
 
 export type Chat = {
-  id: number;
-  user1: User;
-  user2: User;
+  chatID: number;
+  name: string;
+  photo: string;
   messages: Message[];
+  type: string;
+
+  userID: number; // можно использовать для 2-х целей
+
+  users: User[];
 };

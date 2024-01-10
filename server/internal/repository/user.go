@@ -106,7 +106,7 @@ func (r *UserPostgres) GetUserByID(userID uint) (models.User, error) {
 		}
 		return models.User{}, fmt.Errorf("error get user by id %s: ", err.Error())
 	}
-	
+
 	return u, nil
 }
 

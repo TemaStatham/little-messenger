@@ -44,3 +44,8 @@ func (c *ChatService) GetChatsByUserID(userID uint) ([]models.Chat, error) {
 func (c *ChatService) GetChatMessages(chatID uint) ([]models.Message, error) {
 	return c.repo.GetChatMessages(chatID)
 }
+
+// SendMessage отправляет сообщение
+func (c *ChatService) SendMessage(content string, userID, chatID uint) error {
+	return c.repo.CreateMessage(content, userID, chatID)
+}

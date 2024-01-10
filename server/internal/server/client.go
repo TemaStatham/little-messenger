@@ -74,7 +74,7 @@ func (c *Client) recognizeMessage(message []byte) {
 		return
 	}
 	c.clientID = userID
-	
+
 	switch parsedMessage.Type {
 	case "auth":
 		user, err := c.services.GetUserByID(c.clientID)
@@ -104,6 +104,16 @@ func (c *Client) recognizeMessage(message []byte) {
 		c.send <- jsonData
 		break
 	case "send":
+		uintValue, err := strconv.ParseUint(parsedMessage.ChatID, 10, 32)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		c.services.SendMessage(parsedMessage.Content, userID, uint(uintValue))
+		if err != nil {
+			log.Println(err)
+			return
+		}
 		break
 	case "create chat":
 		user, err := c.services.GetUserByID(c.clientID)
@@ -127,7 +137,7 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		jsonData, err := json.Marshal(map[string]interface{}{
-			"user": user,
+			"user":          user,
 			"chats":         chats,
 			"conversations": conversations,
 		})
@@ -159,8 +169,8 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		jsonData, err := json.Marshal(map[string]interface{}{
-			"user":  user,
-			"users": users,
+			"user":          user,
+			"users":         users,
 			"chats":         chats,
 			"conversations": conversations,
 		})
@@ -192,10 +202,30 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		jsonData, err := json.Marshal(map[string]interface{}{
-			"status": "contact create success",
-			"user":   user,
+			"status":        "contact create success",
+			"user":          user,
 			"chats":         chats,
 			"conversations": conversations,
+		})
+		if err != nil {
+			log.Println("ошибка при маршалинге в JSON: ", err)
+			return
+		}
+		c.send <- jsonData
+		break
+	case "get messages":
+		uintValue, err := strconv.ParseUint(parsedMessage.ChatID, 10, 32)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		messages, err := c.services.GetChatMessages(uint(uintValue))
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		jsonData, err := json.Marshal(map[string]interface{}{
+			"messages": messages,
 		})
 		if err != nil {
 			log.Println("ошибка при маршалинге в JSON: ", err)
