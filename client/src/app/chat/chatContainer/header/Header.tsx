@@ -3,6 +3,9 @@ import { Chat } from '../../../../types/Chats';
 
 type HeaderProps = {
   chat: Chat;
+  setSearch: (s: boolean) => void;
+  setPerson: (s: boolean) => void;
+  setClip: (s: boolean) => void;
 };
 
 export const Header = (props: HeaderProps) => {
@@ -16,10 +19,30 @@ export const Header = (props: HeaderProps) => {
           </div>
         </div>
         <div className={styles.header__buttons}>
-          <div className={styles.buttons__search}></div>
-          <div className={styles.buttons__persons}></div>
-          <div className={styles.buttons__paper_clip}></div>
-          <div className={styles.buttons__dots}></div>
+          <div
+            className={styles.buttons__search}
+            onClick={() => {
+              props.setClip(false);
+              props.setPerson(false);
+              props.setSearch(true);
+            }}
+          ></div>
+          <div
+            className={styles.buttons__persons}
+            onClick={() => {
+              props.setClip(false);
+              props.setPerson(true);
+              props.setSearch(false);
+            }}
+          ></div>
+          <div
+            className={styles.buttons__paper_clip}
+            onClick={() => {
+              props.setClip(true);
+              props.setPerson(false);
+              props.setSearch(false);
+            }}
+          ></div>
         </div>
       </div>
     </>

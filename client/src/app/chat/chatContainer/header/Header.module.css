@@ -39,26 +39,42 @@
   width: 40%;
 }
 
+.buttons__search,
+.buttons__persons,
+.buttons__paper_clip,
+.buttons__dots {
+  width: 50px;
+  height: 50px;
+  background-size: cover;
+  border-radius: 20px;
+}
+
+.buttons__search:hover,
+.buttons__persons:hover,
+.buttons__paper_clip:hover,
+.buttons__dots:hover {
+  background-color: rgba(211, 211, 211, 0.4);
+}
+
+.buttons__search:active,
+.buttons__persons:active,
+.buttons__paper_clip:active,
+.buttons__dots:active {
+  background-color: rgba(169, 169, 169, 0.4);
+}
+
 .buttons__search {
-  width: 60px;
-  height: 60px;
   background-image: url('../../../../assets/chat/search.svg');
 }
 
 .buttons__persons {
-  width: 60px;
-  height: 60px;
   background-image: url('../../../../assets/chat/person-1.svg');
 }
 
 .buttons__paper_clip {
-  width: 60px;
-  height: 60px;
   background-image: url('../../../../assets/chat/paper-clip.svg');
 }
 
 .buttons__dots {
-  width: 60px;
-  height: 60px;
   background-image: url('../../../../assets/chat/menu-dots-vertical.svg');
 }

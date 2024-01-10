@@ -26,11 +26,11 @@ export const CreateChatComponent = (props: CreateChatComponentProps) => {
           id="chatNameInput"
           onChange={(e) => setChatName(e.target.value)}
         />
-        <div className={styles.list} id="contactsList">
+        {/* <div className={styles.list} id="contactsList">
           {props.user.contacts.map((contact) => (
             <div>{contact.email}</div>
           ))}
-        </div>
+        </div> */}
         <div
           className={styles.confirm}
           onClick={() => {
