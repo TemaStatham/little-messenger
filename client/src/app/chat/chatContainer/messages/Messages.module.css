@@ -3,34 +3,34 @@
   height: 90%;
   min-width: 100%;
   min-height: 100%;
-  overflow: scroll;
+
+  overflow-y: scroll;
   scroll-behavior: auto;
 }
 
-.meassages__meassages_block {
-  width: 100%;
+.messages__messages_block {
+  width: 84%;
   height: 100%;
-  min-height: 100%;
   max-height: 100%;
-
-  overflow: scroll;
-  scroll-behavior: auto;
 }
 
 .me {
-  width: 100px;
-  min-width: none;
+  min-width: auto;
   max-width: 100px;
-  min-height: none;
+  min-height: auto;
   max-height: max-content;
 
+  display: inline-block;
+
   top: 0;
-  left: 100%;
-  right: 0;
-  margin: 5px 0 5px 70%;
+  left: 00;
+  right: 100px;
+  margin: 5px auto 5px 70%;
 
   background-color: aqua;
   border-radius: 10px;
+
+  float: right;
 
   padding: 5px;
   word-wrap: break-word;
