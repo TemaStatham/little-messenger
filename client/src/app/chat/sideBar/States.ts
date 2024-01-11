@@ -3,4 +3,5 @@ export enum CounterState {
   CreateChat,
   AddContact,
   ShowContacts,
+  Profile,
 }

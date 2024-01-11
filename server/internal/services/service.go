@@ -13,6 +13,7 @@ type User interface {
 	GenerateToken(email, password string) (string, error)
 	ParseToken(accessToken string) (uint, error)
 	GetUsers() ([]models.Contact, error)
+	ChangeProfile(u models.User) error
 	CreateContact(userID1 string, userID2 string) error
 }
 
@@ -25,6 +26,7 @@ type Chat interface {
 	GetConversationsByUserID(userID uint) ([]models.Conversation, error)
 	GetChatsByUserID(userID uint) ([]models.Chat, error)
 	GetChatMessages(chatID uint) ([]models.Message, error)
+	
 }
 
 // Service представляет основной уровень сервиса, объединяющий сервисы User, Chat и WebSocket.

@@ -5,7 +5,7 @@ export type User = {
   lastName: string;
   email: string;
   password: string;
-  imageURL: string | null;
+  imageURL: string;
   contacts: ContactType[];
 };
 

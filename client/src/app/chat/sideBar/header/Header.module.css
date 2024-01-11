@@ -12,7 +12,9 @@
   width: 15%;
   height: 70%;
 
-  background-color: rgb(255, 255, 255);
+  background-image: url(./../../../../assets/chat/menu-lines.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
 
   border-radius: 40px;
   display: flex;
@@ -39,8 +41,8 @@
 }
 
 .form__search {
-  width: 75%;
-  height: 60%;
+  width: 80%;
+  height: 50%;
 
   border: 1px solid rgba(0, 0, 0, 0.4);
   background-color: rgb(255, 255, 255, 0.5);

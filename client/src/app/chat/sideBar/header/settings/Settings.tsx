@@ -36,6 +36,12 @@ export const Settings = (props: SettingsProps) => {
           handleState={props.handleState}
           state={CounterState.ShowContacts}
         />
+        <Field
+          setPopup={props.setPopup}
+          text="Профиль"
+          handleState={props.handleState}
+          state={CounterState.Profile}
+        />
       </div>
     </>
   );

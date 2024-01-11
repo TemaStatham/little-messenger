@@ -10,6 +10,7 @@ import { User } from '../../../types/User';
 import { Data } from '../../../types/Data';
 import { ContactType } from '../../../types/User';
 import { Chat } from '../../../types/Chats';
+import { ProfileComponent } from './popups/profile/Profile';
 
 type SideBarProps = {
   user: User;
@@ -43,6 +44,13 @@ export const SideBar = (props: SideBarProps) => {
       )}
       {state === CounterState.ShowContacts && (
         <ShowContactsComponent user={props.user} handleState={handleState} />
+      )}
+      {state === CounterState.Profile && (
+        <ProfileComponent
+          user={props.user}
+          handleEvent={props.handleEvent}
+          handleState={handleState}
+        />
       )}
       <div className={styles.side_bar__header}>
         <HeaderComponent handleState={handleState} />

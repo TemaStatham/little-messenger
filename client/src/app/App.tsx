@@ -135,6 +135,22 @@ const App: React.FC = () => {
           console.log(messages);
         };
         return;
+      case 'change profile':
+        ws.send(
+          JSON.stringify({
+            clientID: localStorage.getItem('token'),
+            type: 'change profile',
+            chatID: data.chatId,
+            content: data.content,
+          }),
+        );
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          const messages = data.messages as Message[];
+          setMessages(messages);
+          console.log(messages);
+        };
+        return;
       default:
         console.log('Неизвестный статус - ', data.status);
     }

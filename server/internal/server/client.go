@@ -3,10 +3,12 @@ package server
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"strconv"
 	"time"
 
+	"github.com/TemaStatham/Little-Messenger/internal/models"
 	"github.com/TemaStatham/Little-Messenger/internal/services"
 	"github.com/gorilla/websocket"
 )
@@ -232,6 +234,19 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		c.send <- jsonData
+		break
+	case "change profile":
+		var u models.User
+		if err := json.Unmarshal([]byte(parsedMessage.Content), &u); err != nil {
+			log.Printf("error unmarshalling JSON: %v\n", err)
+			return
+		}
+		fmt.Print(u)
+		if err := c.services.ChangeProfile(u); err != nil {
+			log.Println(err)
+			return
+		}
+		
 		break
 	default:
 		log.Printf("unknown message type: %s", parsedMessage.ClientID)

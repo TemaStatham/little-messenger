@@ -145,3 +145,18 @@ func (a *UserService) GetUsers() ([]models.Contact, error) {
 func (a *UserService) CreateContact(userID1 string, userID2 string) error {
 	return a.repo.CreateContact(userID1, userID2)
 }
+
+// ChangeProfile меняет профиль пользователя
+func (a *UserService) ChangeProfile(u models.User) error {
+	err := a.repo.ChangeProfile(u)
+	if err != nil {
+		return err
+	}
+
+	err = a.repo.CreateUserPhoto(u.ID, u.ImageURLs)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

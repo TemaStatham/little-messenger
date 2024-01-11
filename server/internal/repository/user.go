@@ -41,7 +41,9 @@ func (r *UserPostgres) CreateUser(user *models.User) (uint, error) {
 
 // CreateUserPhoto - метод создания пользователя в базе данных.
 func (r *UserPostgres) CreateUserPhoto(userID uint, imageURLs []string) error {
+	fmt.Print(1)
 	for _, url := range imageURLs {
+		fmt.Print(2)
 		query := `
             INSERT INTO user_photos (path, user_id)
             VALUES ($1, $2)
@@ -51,6 +53,8 @@ func (r *UserPostgres) CreateUserPhoto(userID uint, imageURLs []string) error {
 			return fmt.Errorf("error creating user photo: %v", err)
 		}
 	}
+
+	fmt.Print(3)
 
 	return nil
 }
@@ -208,4 +212,20 @@ func (r *UserPostgres) GetContactsByUserID(userID uint) ([]models.Contact, error
 	}
 
 	return contacts, nil
+}
+
+
+// ChangeProfile изменяет профиль в базе данных
+func (c *UserPostgres) ChangeProfile(u models.User) error {
+	
+	query := `
+		UPDATE users
+		SET username = $1, first_name = $2, last_name = $3, email = $4 
+		WHERE id = $5
+	`
+	
+
+	_, err := c.db.Exec(query, u.Username, u.FirstName, u.LastName, u.Email, u.ID)
+	
+	return err
 }

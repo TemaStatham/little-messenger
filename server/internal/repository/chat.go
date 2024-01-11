@@ -169,3 +169,5 @@ func (c *ChatPostgres) GetChatMessages(chatID uint) ([]models.Message, error) {
 
 	return messages, nil
 }
+
+
