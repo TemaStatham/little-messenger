@@ -37,7 +37,18 @@ func NewUserService(repo repository.User) *UserService {
 // CreateUser создает нового пользователя и возвращает идентификатор пользователя.
 func (a *UserService) CreateUser(user *models.User) (uint, error) {
 	user.Password = generatePasswordHash(user.Password)
-	return a.repo.CreateUser(user)
+	
+	id, err := a.repo.CreateUser(user)
+	if err != nil {
+		return 0, nil
+	}
+
+	err = a.repo.CreateUserPhoto(id, "http://localhost:8080/images/default.png")
+	if err != nil {
+		return 0, nil
+	}
+	
+	return id, nil
 }
 
 // GenerateToken генерирует аутентификационный токен для указанного email и пароля.
@@ -92,7 +103,7 @@ func (a *UserService) GetUserByEmail(email, password string) (models.User, error
 		return models.User{}, err
 	}
 
-	user.ImageURLs = append(user.ImageURLs, photo)
+	user.ImageURLs = photo
 
 	contacts, err := a.repo.GetContactsByUserID(user.ID)
 	if err != nil {
@@ -116,7 +127,7 @@ func (a *UserService) GetUserByID(userID uint) (models.User, error) {
 		return models.User{}, err
 	}
 
-	user.ImageURLs = append(user.ImageURLs, photo)
+	user.ImageURLs = photo
 
 	contacts, err := a.repo.GetContactsByUserID(user.ID)
 	if err != nil {

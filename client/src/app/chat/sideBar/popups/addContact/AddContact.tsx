@@ -22,6 +22,7 @@ export const AddContactComponent = (props: AddContactComponentProps) => {
     });
     return () => {};
   }, []);
+  console.log(props.contacts);
   return (
     <>
       <div
@@ -48,6 +49,7 @@ export const AddContactComponent = (props: AddContactComponentProps) => {
               />
             </div>
           ))}
+          <div className={styles.footer}></div>
         </div>
       </div>
     </>

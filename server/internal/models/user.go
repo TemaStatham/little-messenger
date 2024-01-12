@@ -8,7 +8,7 @@ type User struct {
 	LastName  string    `json:"lastName" db:"last_name"`
 	Email     string    `json:"email" db:"email"`
 	Password  string    `json:"password" db:"password"`
-	ImageURLs []string  `json:"imageURL" db:"-"`
+	ImageURLs string    `json:"imageURL" db:"-"`
 	Contacts  []Contact `json:"contacts" db:"-"`
 }
 
@@ -19,4 +19,5 @@ type Contact struct {
 	FirstName string `json:"first_name" db:"first_name"`
 	LastName  string `json:"last_name" db:"last_name"`
 	Email     string `json:"email" db:"email"`
+	Image     string `json:"image" db:"image"`
 }

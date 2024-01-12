@@ -1,12 +1,51 @@
 .contact {
   width: 95%;
   height: 10%;
-  background-color: aqua;
-  margin: 5px 10px;
+  background-color: rgba(153, 153, 153, 0.445);
+  margin: 10px 10px;
   justify-content: center;
   transition: background-color 0.3s;
+  border-radius: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .contact:hover {
   background-color: lightblue;
+}
+
+.photo {
+  top: 100%;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 3px 10px 3px 3px;
+}
+
+.contact {
+  width: 95%;
+  height: 10%;
+  background-color: rgba(153, 153, 153, 0.445);
+  margin: 10px 10px;
+  justify-content: center;
+  transition: background-color 0.3s;
+  border-radius: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.contact:hover {
+  background-color: lightblue;
+}
+
+.photo {
+  top: 100%;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 3px 10px 3px 3px;
 }

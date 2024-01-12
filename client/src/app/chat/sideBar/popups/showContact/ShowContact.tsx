@@ -18,7 +18,15 @@ export const ShowContactsComponent = (props: ShowContactsComponentProps) => {
       ></div>
       <div className={styles.popup}>
         {props.user.contacts.map((contact) => (
-          <div>{contact.email}</div>
+          <div className={styles.contact}>
+            <img className={styles.photo} src={contact.image} width={100}></img>
+            <div className={styles.username}>
+              {contact.username}
+              <div>{contact.firstName}</div>
+              <div>{contact.lastName}</div>
+              <div>{contact.email}</div>
+            </div>
+          </div>
         ))}
       </div>
     </>

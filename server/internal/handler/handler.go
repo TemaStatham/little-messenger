@@ -44,7 +44,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		api.POST("/upload", h.uploadFile)
 		api.OPTIONS("/upload", h.options)
 	}
-	
+
 	router.Static("/images", "./images")
 
 	hub := server.NewHub()

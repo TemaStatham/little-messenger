@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"path/filepath"
+	"strconv"
 
 	"github.com/TemaStatham/Little-Messenger/internal/models"
 	"github.com/gin-gonic/gin"
@@ -67,13 +70,13 @@ func (h *Handler) signIn(c *gin.Context) {
 func (h *Handler) uploadFile(c *gin.Context) {
 	// Parse our multipart form, 10 << 20 specifies a maximum
 	// upload of 10 MB files.
-	
+
 	err := c.Request.ParseMultipartForm(10 << 20)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	
+
 	// FormFile returns the first file for the given key `myFile`
 	// it also returns the FileHeader so we can get the Filename,
 	// the Header and the size of the file
@@ -84,6 +87,20 @@ func (h *Handler) uploadFile(c *gin.Context) {
 	}
 	defer file.Close()
 	
+	id := c.PostForm("id")
+    username := c.PostForm("username")
+    email := c.PostForm("email")
+    firstName := c.PostForm("firstName")
+    lastName := c.PostForm("lastName")
+    
+	uintValue, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		fmt.Println("Ошибка при преобразовании строки в uint:", err)
+		return
+	}
+
+	
+
 	// Create a temporary file within our temp-images directory that follows
 	// a particular naming pattern
 	tempFile, err := ioutil.TempFile("./images", "upload-*.png")
@@ -91,8 +108,20 @@ func (h *Handler) uploadFile(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+	_, fileName := filepath.Split(tempFile.Name())
+	u := models.User{
+		ID: uint(uintValue), 
+		Username: username, 
+		Email:email, 
+		FirstName:firstName, 
+		LastName:lastName, 
+		ImageURLs: fmt.Sprintf("http://localhost:8080/images/%s", fileName),
+	}
+
+	h.services.ChangeProfile(u)
+
 	defer tempFile.Close()
-	
+
 	// read all of the contents of our uploaded file into a
 	// byte array
 	fileBytes, err := ioutil.ReadAll(file)
@@ -100,7 +129,7 @@ func (h *Handler) uploadFile(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	
+
 	// write this byte array to our temporary file
 	_, err = tempFile.Write(fileBytes)
 	if err != nil {
@@ -108,7 +137,6 @@ func (h *Handler) uploadFile(c *gin.Context) {
 		return
 	}
 
-	
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"filePath": tempFile.Name(),
 	})

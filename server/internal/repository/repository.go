@@ -8,7 +8,7 @@ import (
 // User - интерфейс для взаимодействия с данными пользователей в базе данных.
 type User interface {
 	CreateUser(user *models.User) (uint, error)
-	CreateUserPhoto(userID uint, imageURLs []string) error
+	CreateUserPhoto(userID uint, imageURLs string) error
 	CreateContact(user1ID, user2ID string) error
 
 	ChangeProfile(u models.User) error

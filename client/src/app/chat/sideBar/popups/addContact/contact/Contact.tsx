@@ -31,7 +31,8 @@ export const Contact = (props: ContactProps) => {
         props.handleState(CounterState.Null);
       }}
     >
-      {props.contact.id}
+      <img className={styles.photo} src={props.contact.image} width={100}></img>
+      <div className={styles.username}>{props.contact.username}</div>
     </div>
   );
 };

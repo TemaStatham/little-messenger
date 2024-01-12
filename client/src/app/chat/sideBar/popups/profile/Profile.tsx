@@ -15,7 +15,7 @@ export const ProfileComponent = (props: ProfileProps) => {
   // const [upImgURL, setUpImgURL] = useState<string>(props.user.imageURL);
   const [imgURL, setImgURL] = useState<string>(props.user.imageURL);
   console.log(imgURL);
-
+  const [i, serI] = useState<string>(props.user.imageURL);
   const [username, setUsername] = useState<string>(props.user.username);
   const [email, setEmail] = useState<string>(props.user.email);
   const [firstName, setFirstName] = useState<string>(props.user.firstName);
@@ -28,6 +28,7 @@ export const ProfileComponent = (props: ProfileProps) => {
     if (selectedFile) {
       //setUpImgURL(URL.createObjectURL(selectedFile));
       //setFile(selectedFile);
+      serI(URL.createObjectURL(selectedFile));
     }
   };
 
@@ -51,7 +52,7 @@ export const ProfileComponent = (props: ProfileProps) => {
             handlePicker();
           }}
           //style={{ backgroundImage: `url(${imgURL})` }}
-          src={imgURL}
+          src={i}
         ></img>
         <input
           ref={imgPicker}
@@ -97,7 +98,6 @@ export const ProfileComponent = (props: ProfileProps) => {
         <div
           className={styles.save}
           onClick={async () => {
-            // props.handleState(CounterState.Null);
             const token = localStorage.getItem('token');
             console.log(imgPicker.current?.files?.[0]);
             const formData = new FormData();
@@ -124,8 +124,7 @@ export const ProfileComponent = (props: ProfileProps) => {
                 },
                 body: formData,
               });
-              console.log(response);
-              // Обработка ответа от сервера
+
               if (response.ok) {
                 const responseData = await response.json();
                 console.log(responseData);
@@ -134,26 +133,17 @@ export const ProfileComponent = (props: ProfileProps) => {
                   .substring(1);
 
                 setImgURL(`${Endpoints.static}${data}`);
+                serI(imgURL);
               } else {
-                console.error('Ошибка при сохранении профиля');
+                console.log('Ошибка при сохранении профиля');
               }
             } catch (error) {
-              console.error('Ошибка при выполнении запроса:', error);
+              console.log('Ошибка при выполнении запроса:', error);
             }
-            props.handleEvent({
-              status: 'change profile',
-              token: '',
-              clientID: '',
-              content: JSON.stringify({
-                id: props.user.id,
-                username: username,
-                email: email,
-                firstName: firstName,
-                lastName: lastName,
-                imageURL: [imgURL],
-              }),
-              chatId: ``,
-            });
+            setTimeout(() => {
+              props.handleState(CounterState.Null);
+              location.reload();
+            }, 1000);
           }}
         >
           Сохранить

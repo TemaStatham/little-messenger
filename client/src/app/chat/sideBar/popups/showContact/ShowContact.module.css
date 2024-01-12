@@ -14,6 +14,9 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 20px 20px;
 }
 
 @keyframes fadeIn {
@@ -33,4 +36,25 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 999;
+}
+
+.contact {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 80%;
+  height: 10%;
+  border-radius: 20px;
+  padding: 10px;
+}
+
+.contact:hover {
+  background-color: rgba(0, 255, 255, 0.336);
+}
+
+.photo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin: 0 10px 0 0;
 }

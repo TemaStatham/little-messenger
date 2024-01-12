@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/TemaStatham/Little-Messenger/internal/models"
 	"github.com/TemaStatham/Little-Messenger/internal/services"
 	"github.com/gorilla/websocket"
 )
@@ -29,7 +28,6 @@ type Message struct {
 	ChatID   string `json:"chatID"`
 	Type     string `json:"type"`
 	Content  string `json:"content"`
-	Image    []byte `json:"file"`
 }
 
 type Client struct {
@@ -237,18 +235,44 @@ func (c *Client) recognizeMessage(message []byte) {
 		}
 		c.send <- jsonData
 		break
-	case "change profile":
-		var u models.User
-		if err := json.Unmarshal([]byte(parsedMessage.Content), &u); err != nil {
-			log.Printf("error unmarshalling JSON: %v\n", err)
-			return
-		}
-
-		if err := c.services.ChangeProfile(u); err != nil {
-			log.Println(err)
-			return
-		}
-		break
+	// case "change profile":
+	// 	var u models.User
+	// 	if err := json.Unmarshal([]byte(parsedMessage.Content), &u); err != nil {
+	// 		log.Printf("error unmarshalling JSON: %v\n", err)
+	// 		return
+	// 	}
+	// 	fmt.Print("1\n")
+	// 	if err := c.services.ChangeProfile(u); err != nil {
+	// 		log.Println(err)
+	// 		return
+	// 	}
+	// 	fmt.Print("2\n")
+	// 	user, err := c.services.GetUserByID(c.clientID)
+	// 	if err != nil {
+	// 		log.Printf("%v\n", err)
+	// 		return
+	// 	}
+	// 	fmt.Print("3\n")
+	// 	chats, err := c.services.GetChatsByUserID(userID)
+	// 	if err != nil {
+	// 		log.Printf("%v\n", err)
+	// 		return
+	// 	}
+	// 	fmt.Print("4\n")
+	// 	conversations, err := c.services.GetConversationsByUserID(userID)
+	// 	if err != nil {
+	// 		log.Printf("%v\n", err)
+	// 		return
+	// 	}
+	// 	fmt.Print("5\n")
+	// 	jsonData, err := json.Marshal(map[string]interface{}{
+	// 		"status":        "contact create success",
+	// 		"user":          user,
+	// 		"chats":         chats,
+	// 		"conversations": conversations,
+	// 	})
+	// 	c.send <- jsonData
+	// 	break
 	default:
 		log.Printf("unknown message type: %s", parsedMessage.ClientID)
 		break

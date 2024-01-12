@@ -40,21 +40,15 @@ func (r *UserPostgres) CreateUser(user *models.User) (uint, error) {
 }
 
 // CreateUserPhoto - метод создания пользователя в базе данных.
-func (r *UserPostgres) CreateUserPhoto(userID uint, imageURLs []string) error {
-	fmt.Print(1)
-	for _, url := range imageURLs {
-		fmt.Print(2)
-		query := `
+func (r *UserPostgres) CreateUserPhoto(userID uint, imageURLs string) error {
+	query := `
             INSERT INTO user_photos (path, user_id)
             VALUES ($1, $2)
         `
-		_, err := r.db.Exec(query, url, userID)
-		if err != nil {
-			return fmt.Errorf("error creating user photo: %v", err)
-		}
+	_, err := r.db.Exec(query, imageURLs, userID)
+	if err != nil {
+		return fmt.Errorf("error creating user photo: %v", err)
 	}
-
-	fmt.Print(3)
 
 	return nil
 }
@@ -117,8 +111,24 @@ func (r *UserPostgres) GetUserByID(userID uint) (models.User, error) {
 // GetUsers получает всех пользователей из бд
 func (r *UserPostgres) GetUsers() ([]models.Contact, error) {
 	query := `
-		SELECT id, username, first_name, last_name, email 
-		FROM users 
+		SELECT
+			u.id,
+			u.username,
+			u.first_name,
+			u.last_name,
+			u.email,
+			COALESCE(up.path, 'default_path') AS image
+		FROM
+			users u
+		LEFT JOIN
+			(
+				SELECT
+					user_id,
+					path,
+					ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY id DESC) AS row_num
+				FROM
+					user_photos
+			) up ON u.id = up.user_id AND up.row_num = 1
 	`
 
 	users := []models.Contact{}
@@ -152,7 +162,6 @@ func (r *UserPostgres) GetUserLastPhotoByUserID(userID uint) (string, error) {
 		}
 		return "", fmt.Errorf("error scanning last user photo path: %v", err)
 	}
-	
 
 	return lastPath, nil
 }
@@ -161,7 +170,11 @@ func (r *UserPostgres) GetUserLastPhotoByUserID(userID uint) (string, error) {
 func (r *UserPostgres) GetContactsIDsByUserID(userID uint) ([]uint, error) {
 	var userIDs []uint
 
-	query := `SELECT id, user1_id, user2_id FROM contacts WHERE user1_id = $1 OR user2_id = $1`
+	query := `	
+		SELECT id, user1_id, user2_id 
+		FROM contacts 
+		WHERE user1_id = $1 OR user2_id = $1
+	`
 
 	rows, err := r.db.Query(query, userID)
 	if err != nil {
@@ -193,10 +206,19 @@ func (r *UserPostgres) GetContactsIDsByUserID(userID uint) ([]uint, error) {
 // GetContactsByUserID - метод для получения всех контактов пользователя из базы данных по его идентификатору.
 func (r *UserPostgres) GetContactsByUserID(userID uint) ([]models.Contact, error) {
 	query := `
-		SELECT u.id, u.username, u.first_name, u.last_name, u.email
+		SELECT u.id, u.username, u.first_name, u.last_name, u.email, up.path as image
 		FROM users u
 		JOIN contacts c ON u.id = c.user2_id
-		WHERE c.user1_id = $1
+		JOIN
+			(
+				SELECT
+					user_id,
+					path,
+					ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY id DESC) AS row_num
+				FROM
+					user_photos
+			) AS up ON u.id = up.user_id AND up.row_num = 1
+		WHERE c.user1_id = $1 
 	`
 
 	contacts := []models.Contact{}
@@ -208,7 +230,7 @@ func (r *UserPostgres) GetContactsByUserID(userID uint) ([]models.Contact, error
 }
 
 // ChangeProfile изменяет профиль в базе данных
-func (c *UserPostgres) ChangeProfile(u models.User) error {
+func (r *UserPostgres) ChangeProfile(u models.User) error {
 
 	query := `
 		UPDATE users
@@ -216,7 +238,7 @@ func (c *UserPostgres) ChangeProfile(u models.User) error {
 		WHERE id = $5
 	`
 
-	_, err := c.db.Exec(query, u.Username, u.FirstName, u.LastName, u.Email, u.ID)
+	_, err := r.db.Exec(query, u.Username, u.FirstName, u.LastName, u.Email, u.ID)
 
 	return err
 }
