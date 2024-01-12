@@ -12,13 +12,13 @@ type User interface {
 	CreateContact(user1ID, user2ID string) error
 
 	ChangeProfile(u models.User) error
-	
+
 	GetUserByEmail(email, password string) (models.User, error)
 	GetUserByID(userID uint) (models.User, error)
 
 	GetUsers() ([]models.Contact, error)
 
-	GetUserPhotosByUserID(userID uint) ([]string, error)
+	GetUserLastPhotoByUserID(userID uint) (string, error)
 	GetContactsIDsByUserID(userID uint) ([]uint, error)
 	GetContactsByUserID(userID uint) ([]models.Contact, error)
 }
@@ -33,7 +33,6 @@ type Chat interface {
 	GetUserPublicChats(userID uint) ([]models.Conversation, error)
 	GetUserPrivateChats(userID uint) ([]models.Chat, error)
 	GetChatMessages(chatID uint) ([]models.Message, error)
-	
 }
 
 // Repository - структура, объединяющая различные репозитории для работы с данными.

@@ -3,7 +3,6 @@ package server
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -30,6 +29,7 @@ type Message struct {
 	ChatID   string `json:"chatID"`
 	Type     string `json:"type"`
 	Content  string `json:"content"`
+	Image    []byte `json:"file"`
 }
 
 type Client struct {
@@ -45,9 +45,11 @@ func (c *Client) readPump() {
 		c.hub.unregister <- c
 		c.conn.Close()
 	}()
+
 	c.conn.SetReadLimit(maxMessageSize)
 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+
 	for {
 		_, message, err := c.conn.ReadMessage()
 		if err != nil {
@@ -241,12 +243,11 @@ func (c *Client) recognizeMessage(message []byte) {
 			log.Printf("error unmarshalling JSON: %v\n", err)
 			return
 		}
-		fmt.Print(u)
+
 		if err := c.services.ChangeProfile(u); err != nil {
 			log.Println(err)
 			return
 		}
-		
 		break
 	default:
 		log.Printf("unknown message type: %s", parsedMessage.ClientID)

@@ -133,35 +133,27 @@ func (r *UserPostgres) GetUsers() ([]models.Contact, error) {
 	return users, nil
 }
 
-// GetUserPhotosByUserID - метод для получения всех путей к фотографиям пользователя из базы данных по его идентификатору.
-func (r *UserPostgres) GetUserPhotosByUserID(userID uint) ([]string, error) {
-	var paths []string
+// GetUserLastPhotoByUserID - метод для получения последнего пути к фотографии пользователя из базы данных по его идентификатору.
+func (r *UserPostgres) GetUserLastPhotoByUserID(userID uint) (string, error) {
+	var lastPath string
 
 	query := `
 		SELECT path 
 		FROM user_photos 
 		WHERE user_id = $1
+		ORDER BY id DESC
+		LIMIT 1
 	`
 
-	rows, err := r.db.Query(query, userID)
-	if err != nil {
-		return nil, fmt.Errorf("error querying user photos: %v", err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var path string
-		if err := rows.Scan(&path); err != nil {
-			return nil, fmt.Errorf("error scanning user photo path: %v", err)
+	row := r.db.QueryRow(query, userID)
+	if err := row.Scan(&lastPath); err != nil {
+		if err == sql.ErrNoRows {
+			return "", nil // Нет строк, возвращаем пустую строку (или можно вернуть другое значение по умолчанию)
 		}
-		paths = append(paths, path)
+		return "", fmt.Errorf("error scanning last user photo path: %v", err)
 	}
 
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("error iterating over user photos: %v", err)
-	}
-
-	return paths, nil
+	return lastPath, nil
 }
 
 // GetContactsIDsByUserID - метод для получения всех айди контактов у пользователя.
@@ -214,18 +206,16 @@ func (r *UserPostgres) GetContactsByUserID(userID uint) ([]models.Contact, error
 	return contacts, nil
 }
 
-
 // ChangeProfile изменяет профиль в базе данных
 func (c *UserPostgres) ChangeProfile(u models.User) error {
-	
+
 	query := `
 		UPDATE users
 		SET username = $1, first_name = $2, last_name = $3, email = $4 
 		WHERE id = $5
 	`
-	
 
 	_, err := c.db.Exec(query, u.Username, u.FirstName, u.LastName, u.Email, u.ID)
-	
+
 	return err
 }

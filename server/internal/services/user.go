@@ -87,12 +87,12 @@ func (a *UserService) GetUserByEmail(email, password string) (models.User, error
 		return models.User{}, err
 	}
 
-	photos, err := a.repo.GetUserPhotosByUserID(user.ID)
+	photo, err := a.repo.GetUserLastPhotoByUserID(user.ID)
 	if err != nil {
 		return models.User{}, err
 	}
 
-	user.ImageURLs = photos
+	user.ImageURLs = append(user.ImageURLs, photo)
 
 	contacts, err := a.repo.GetContactsByUserID(user.ID)
 	if err != nil {
@@ -111,12 +111,12 @@ func (a *UserService) GetUserByID(userID uint) (models.User, error) {
 		return models.User{}, err
 	}
 
-	photos, err := a.repo.GetUserPhotosByUserID(user.ID)
+	photo, err := a.repo.GetUserLastPhotoByUserID(user.ID)
 	if err != nil {
 		return models.User{}, err
 	}
 
-	user.ImageURLs = photos
+	user.ImageURLs = append(user.ImageURLs, photo)
 
 	contacts, err := a.repo.GetContactsByUserID(user.ID)
 	if err != nil {
