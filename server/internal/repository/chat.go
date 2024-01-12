@@ -31,7 +31,7 @@ func (c *ChatPostgres) CreatePublicChat(creatorID uint, name string) error {
 
 	query := `
 		INSERT INTO public_chats (name, creation_date, creator_user_id, chat_id, img)
-		VALUES ($1, CURRENT_DATE, $2, $3, 'default')
+		VALUES ($1, CURRENT_DATE, $2, $3, 'http://localhost:8080/images/chat.png')
 	`
 	_, err = c.db.Exec(query, name, creatorID, chatID)
 	if err != nil {

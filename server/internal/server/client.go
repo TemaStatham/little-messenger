@@ -116,6 +116,19 @@ func (c *Client) recognizeMessage(message []byte) {
 			log.Println(err)
 			return
 		}
+		messages, err := c.services.GetChatMessages(uint(uintValue))
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		jsonData, err := json.Marshal(map[string]interface{}{
+			"messages": messages,
+		})
+		if err != nil {
+			log.Println("ошибка при маршалинге в JSON: ", err)
+			return
+		}
+		c.send <- jsonData
 		break
 	case "create chat":
 		user, err := c.services.GetUserByID(c.clientID)

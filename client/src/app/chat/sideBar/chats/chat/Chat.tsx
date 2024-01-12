@@ -9,6 +9,7 @@ type ChatComponentProps = {
 };
 
 export const ChatComponent = (props: ChatComponentProps) => {
+  console.log(props.chat);
   return (
     <>
       <div
@@ -29,7 +30,11 @@ export const ChatComponent = (props: ChatComponentProps) => {
         }}
       >
         <div className={styles.chat}>
-          <div className={styles.chat__photo}></div>
+          <img
+            className={styles.chat__photo}
+            src={props.chat.photo}
+            width={80}
+          ></img>
           <div className={styles.chat__text_block}>
             <div className={styles.text_block__name}>{props.chat.name}</div>
           </div>

@@ -6,7 +6,7 @@ import "time"
 type Conversation struct {
 	ID        uint      `json:"chatID" db:"chat_id"`
 	Name      string    `json:"name" db:"name"`
-	Img       string    `json:"img" db:"img"`
+	Img       string    `json:"photo" db:"img"`
 	Creator   uint      `json:"creator" db:"creator_user_id"`
 	CreatedAt time.Time `json:"createdAt" db:"creation_date"`
 	Users     []Contact `json:"users" db:"-"`

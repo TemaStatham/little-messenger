@@ -4,14 +4,15 @@ import { ChatConteiner } from './chatContainer/ChatConteiner';
 import { User, ContactType } from '../../types/User';
 import { Data } from '../../types/Data';
 import { useState } from 'react';
-import { Chat, Message } from '../../types/Chats';
+import { Chat } from '../../types/Chats';
 
 type ChatComponentProps = {
   user: User;
   handleEvent: (data: Data) => void;
   contacts: ContactType[];
   chats: Chat[];
-  messages: Message[];
+  ws: WebSocket;
+  //  messages: Message[];
 };
 
 export const ChatApp = (props: ChatComponentProps) => {
@@ -29,12 +30,17 @@ export const ChatApp = (props: ChatComponentProps) => {
         handleEvent={props.handleEvent}
         handleChat={handleChat}
       />
-      <ChatConteiner
-        messages={props.messages}
-        handleEvent={props.handleEvent}
-        chat={contact}
-        user={props.user}
-      />
+      {contact ? (
+        <ChatConteiner
+          ws={props.ws}
+          //messages={props.messages}
+          handleEvent={props.handleEvent}
+          chat={contact}
+          user={props.user}
+        />
+      ) : (
+        <></>
+      )}
     </div>
   );
 };

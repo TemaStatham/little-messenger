@@ -13,7 +13,7 @@ export const Header = (props: HeaderProps) => {
     <>
       <div className={styles.header}>
         <div className={styles.header__group}>
-          <div className={styles.group__photo}></div>
+          <img className={styles.group__photo} src={props.chat.photo}></img>
           <div className={styles.group__tittle}>
             <h3>{props.chat.name}</h3>
           </div>

@@ -11,7 +11,6 @@ const checkTokenValidity = async (
   ws: WebSocket,
   setUser: (u: User | null) => void,
   setChats: (c: Chat[]) => void,
-  setMessages: (m: Message[]) => void,
 ) => {
   const token = localStorage.getItem('token');
   if (!token) {
@@ -33,20 +32,29 @@ const checkTokenValidity = async (
     const data = JSON.parse(event.data);
     if (data.user) {
       setUser(data.user);
-      setMessages([]);
     }
     if (data.conversations) {
       setChats(data.conversations);
-      setMessages([]);
     }
     return;
   };
 };
 
-const App: React.FC = () => {
+// type AppProps = {
+//   user: User | null;
+//   chats: Chat[];
+//   message: Message[];
+//   contacts: ContactType[];
+//   setUser: (u: User | null) => void;
+//   setChats: (c: Chat[]) => void;
+//   setMessages: (m: Message[]) => void;
+//   setContacts: (m: ContactType[]) => void;
+// };
+
+const App = () => {
   const [user, setUser] = useState<User | null>(null);
   const [chats, setChats] = useState<Chat[]>([]);
-  const [messages, setMessages] = useState<Message[]>([]);
+
   const [contacts, setContacts] = useState<ContactType[]>([]);
   const [loading, setIsLoading] = useState<boolean>(false);
   const ws = new WebSocket(Endpoints.ws);
@@ -115,7 +123,7 @@ const App: React.FC = () => {
         ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
           const messages = data.messages as Message[];
-          setMessages(messages);
+          //  setMessages(messages);
           console.log(messages);
         };
         return;
@@ -131,26 +139,10 @@ const App: React.FC = () => {
         ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
           const messages = data.messages as Message[];
-          setMessages(messages);
+          //  setMessages(messages);
           console.log(messages);
         };
         return;
-      // case 'change profile':
-      //   ws.send(
-      //     JSON.stringify({
-      //       clientID: localStorage.getItem('token'),
-      //       type: 'change profile',
-      //       chatID: data.chatId,
-      //       content: data.content,
-      //     }),
-      //   );
-      //   ws.onmessage = (event) => {
-      //     const data = JSON.parse(event.data);
-      //     const messages = data.messages as Message[];
-      //     setMessages(messages);
-      //     console.log(messages);
-      //   };
-      //   return;
       default:
         console.log('Неизвестный статус - ', data.status);
     }
@@ -164,13 +156,9 @@ const App: React.FC = () => {
     setChats(c);
   };
 
-  const updateMessages = (m: Message[]) => {
-    setMessages(m);
-  };
-
   useEffect(() => {
     const checkAuth = async () => {
-      await checkTokenValidity(ws, updateUser, updateChats, updateMessages);
+      await checkTokenValidity(ws, updateUser, updateChats);
     };
     checkAuth();
     return () => {
@@ -191,10 +179,11 @@ const App: React.FC = () => {
             element={
               <ChatApp
                 user={user}
+                ws={ws}
                 handleEvent={handleEvent}
                 contacts={contacts}
                 chats={chats}
-                messages={messages}
+                // messages={messages}
               />
             }
           />
