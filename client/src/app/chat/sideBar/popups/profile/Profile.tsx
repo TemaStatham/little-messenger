@@ -12,8 +12,10 @@ type ProfileProps = {
 };
 
 export const ProfileComponent = (props: ProfileProps) => {
+  // const [upImgURL, setUpImgURL] = useState<string>(props.user.imageURL);
   const [imgURL, setImgURL] = useState<string>(props.user.imageURL);
   console.log(imgURL);
+
   const [username, setUsername] = useState<string>(props.user.username);
   const [email, setEmail] = useState<string>(props.user.email);
   const [firstName, setFirstName] = useState<string>(props.user.firstName);
@@ -24,8 +26,7 @@ export const ProfileComponent = (props: ProfileProps) => {
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      setImgURL(URL.createObjectURL(selectedFile));
-
+      //setUpImgURL(URL.createObjectURL(selectedFile));
       //setFile(selectedFile);
     }
   };
@@ -133,29 +134,26 @@ export const ProfileComponent = (props: ProfileProps) => {
                   .substring(1);
 
                 setImgURL(`${Endpoints.static}${data}`);
-
-                if (token) {
-                  props.handleEvent({
-                    status: 'change profile',
-                    token: token,
-                    clientID: token,
-                    content: JSON.stringify({
-                      id: props.user.id,
-                      username: username,
-                      email: email,
-                      firstName: firstName,
-                      lastName: lastName,
-                      imageURL: [imgURL],
-                    }),
-                    chatId: ``,
-                  });
-                }
               } else {
                 console.error('Ошибка при сохранении профиля');
               }
             } catch (error) {
               console.error('Ошибка при выполнении запроса:', error);
             }
+            props.handleEvent({
+              status: 'change profile',
+              token: '',
+              clientID: '',
+              content: JSON.stringify({
+                id: props.user.id,
+                username: username,
+                email: email,
+                firstName: firstName,
+                lastName: lastName,
+                imageURL: [imgURL],
+              }),
+              chatId: ``,
+            });
           }}
         >
           Сохранить

@@ -152,6 +152,7 @@ func (r *UserPostgres) GetUserLastPhotoByUserID(userID uint) (string, error) {
 		}
 		return "", fmt.Errorf("error scanning last user photo path: %v", err)
 	}
+	
 
 	return lastPath, nil
 }
