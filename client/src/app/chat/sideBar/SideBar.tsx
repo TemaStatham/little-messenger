@@ -53,6 +53,7 @@ export const SideBar = (props: SideBarProps) => {
       )}
       {state === CounterState.AddContact && (
         <AddContactComponent
+          user={props.user}
           handleState={handleState}
           handleEvent={props.handleEvent}
           contacts={props.contacts}

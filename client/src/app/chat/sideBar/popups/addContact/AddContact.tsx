@@ -4,11 +4,13 @@ import { useEffect } from 'react';
 import { Contact } from './contact/Contact';
 import { Data } from '../../../../../types/Data';
 import { ContactType } from '../../../../../types/User';
+import { User } from '../../../../../types/User';
 
 type AddContactComponentProps = {
   handleState: (state: CounterState) => void;
   handleEvent: (data: Data) => void;
   contacts: ContactType[];
+  user: User;
 };
 
 export const AddContactComponent = (props: AddContactComponentProps) => {
@@ -40,15 +42,21 @@ export const AddContactComponent = (props: AddContactComponentProps) => {
       ></div>
       <div className={styles.popup}>
         <div className={styles.list}>
-          {props.contacts.map((contact, index) => (
-            <div key={index} className={styles.contactItem}>
-              <Contact
-                contact={contact}
-                handleState={props.handleState}
-                handleEvent={props.handleEvent}
-              />
-            </div>
-          ))}
+          {props.contacts.length > 0 ? (
+            props.contacts.map((contact, index) => {
+              return (
+                <div key={index} className={styles.contactItem}>
+                  <Contact
+                    contact={contact}
+                    handleState={props.handleState}
+                    handleEvent={props.handleEvent}
+                  />
+                </div>
+              );
+            })
+          ) : (
+            <div>У нас нет пользователей</div>
+          )}
           <div className={styles.footer}></div>
         </div>
       </div>

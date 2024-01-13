@@ -140,13 +140,23 @@ export const ProfileComponent = (props: ProfileProps) => {
             } catch (error) {
               console.log('Ошибка при выполнении запроса:', error);
             }
+            props.handleState(CounterState.Null);
+            location.reload();
+          }}
+        >
+          Сохранить
+        </div>
+        <div
+          className={styles.leave}
+          onClick={() => {
+            localStorage.setItem('token', '');
             setTimeout(() => {
               props.handleState(CounterState.Null);
               location.reload();
             }, 1000);
           }}
         >
-          Сохранить
+          Выйти
         </div>
       </div>
     </>

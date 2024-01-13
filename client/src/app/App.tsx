@@ -188,6 +188,10 @@ const App = () => {
   // };
 
   useEffect(() => {
+    console.log(chats, 12312);
+  }, [chats]);
+
+  useEffect(() => {
     const checkAuth = async () => {
       await checkTokenValidity(ws, updateUser, updateChats);
     };
