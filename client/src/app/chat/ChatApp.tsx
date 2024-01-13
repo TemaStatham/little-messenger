@@ -5,6 +5,7 @@ import { User, ContactType } from '../../types/User';
 import { Data } from '../../types/Data';
 import { useState } from 'react';
 import { Chat } from '../../types/Chats';
+import { Message } from '../../types/Chats';
 
 type ChatComponentProps = {
   user: User;
@@ -12,7 +13,8 @@ type ChatComponentProps = {
   contacts: ContactType[];
   chats: Chat[];
   ws: WebSocket;
-  //  messages: Message[];
+  messages: Message[];
+  updateMessagges: (c: Message[]) => void;
 };
 
 export const ChatApp = (props: ChatComponentProps) => {
@@ -32,8 +34,9 @@ export const ChatApp = (props: ChatComponentProps) => {
       />
       {contact ? (
         <ChatConteiner
-          ws={props.ws}
-          //messages={props.messages}
+          // ws={props.ws}
+          messages={props.messages}
+          // setMessages={props.updateMessagges}
           handleEvent={props.handleEvent}
           chat={contact}
           user={props.user}

@@ -1,5 +1,6 @@
 import styles from './Header.module.css';
 import { Chat } from '../../../../types/Chats';
+import { useState, useRef, ChangeEvent } from 'react';
 
 type HeaderProps = {
   chat: Chat;
@@ -9,11 +10,37 @@ type HeaderProps = {
 };
 
 export const Header = (props: HeaderProps) => {
+  const [imgURL, setImgURL] = useState<string>(props.chat.photo);
+  const imgPicker = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setImgURL(URL.createObjectURL(selectedFile));
+    }
+  };
+
+  const handlePicker = () => {
+    imgPicker.current?.click();
+  };
+
   return (
     <>
       <div className={styles.header}>
         <div className={styles.header__group}>
-          <img className={styles.group__photo} src={props.chat.photo}></img>
+          <img
+            className={styles.group__photo}
+            src={imgURL}
+            onClick={() => {
+              handlePicker();
+            }}
+          ></img>
+          <input
+            ref={imgPicker}
+            className={styles.profile_input}
+            type="file"
+            onChange={handleImageChange}
+          />
           <div className={styles.group__tittle}>
             <h3>{props.chat.name}</h3>
           </div>

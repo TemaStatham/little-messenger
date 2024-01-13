@@ -1,12 +1,14 @@
 import styles from './Person.module.css';
 import { User } from '../../../../../types/User';
 import { Chat } from '../../../../../types/Chats';
+import { Data } from '../../../../../types/Data';
 
 type PersonProps = {
   setPerson: (s: boolean) => void;
   user: User;
-  ws: WebSocket;
+  //ws: WebSocket;
   chat: Chat;
+  handleEvent: (data: Data) => void;
 };
 
 export const PersonComponent = (props: PersonProps) => {
@@ -24,18 +26,25 @@ export const PersonComponent = (props: PersonProps) => {
             key={contact.id}
             className={styles.contact}
             onClick={() => {
-              props.ws.send(
-                JSON.stringify({
-                  clientID: localStorage.getItem('token'),
-                  type: 'add user to group',
-                  chatID: `${props.chat?.chatID}`,
-                  content: `${contact.id}`,
-                }),
-              );
-              props.ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                console.log(data);
-              };
+              props.handleEvent({
+                status: 'add user to group',
+                token: '',
+                clientID: '',
+                content: `${contact.id}`,
+                chatId: `${props.chat?.chatID}`,
+              });
+              // props.ws.send(
+              //   JSON.stringify({
+              //     clientID: localStorage.getItem('token'),
+              //     type: 'add user to group',
+              //     chatID: `${props.chat?.chatID}`,
+              //     content: `${contact.id}`,
+              //   }),
+              // );
+              // props.ws.onmessage = (event) => {
+              //   const data = JSON.parse(event.data);
+              //   console.log(data);
+              // };
               setTimeout(() => {
                 props.setPerson(false);
               }, 500);

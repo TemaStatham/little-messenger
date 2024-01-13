@@ -13,37 +13,45 @@ import { PersonComponent } from './popups/person/Person';
 type ChatConteinerProps = {
   user: User;
   chat: Chat;
-  //messages: Message[];
+  messages: Message[];
+  //setMessages: (c: Message[]) => void;
   handleEvent: (data: Data) => void;
-  ws: WebSocket;
+  //ws: WebSocket;
 };
 
 export const ChatConteiner = (props: ChatConteinerProps) => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  console.log(messages);
+  // const [messages, setMessages] = useState<Message[]>([]);
+  console.log(props.messages);
   useEffect(() => {
-    props.ws.onopen = () => {
-      props.ws.send(
-        JSON.stringify({
-          clientID: localStorage.getItem('token'),
-          type: 'get messages',
-          chatID: props.chat?.chatID,
-          content: '',
-        }),
-      );
-    };
+    props.handleEvent({
+      status: 'get messages',
+      token: '',
+      clientID: '',
+      content: '',
+      chatId: `${props.chat?.chatID}`,
+    });
+    // props.ws.onopen = () => {
+    //   props.ws.send(
+    //     JSON.stringify({
+    //       clientID: localStorage.getItem('token'),
+    //       type: 'get messages',
+    //       chatID: props.chat?.chatID,
+    //       content: '',
+    //     }),
+    //   );
+    // };
 
-    props.ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      const messages = data.messages as Message[];
-      setMessages(messages);
-      console.log(messages);
-    };
+    // props.ws.onmessage = (event) => {
+    //   const data = JSON.parse(event.data);
+    //   const messages = data.messages as Message[];
+    //   props.setMessages(messages);
+    //   console.log(messages);
+    // };
   }, []);
 
-  const updateMessagges = (m: Message[]) => {
-    setMessages(m);
-  };
+  // const updateMessagges = (m: Message[]) => {
+  //   props.setMessages(m);
+  // };
 
   const [search, setSearch] = useState(false);
   const [person, setPerson] = useState(false);
@@ -76,7 +84,7 @@ export const ChatConteiner = (props: ChatConteinerProps) => {
           <div className={styles.chat_conteiner__messages_field}>
             <Messages
               user={props.user}
-              messages={messages}
+              messages={props.messages}
               handleEvent={props.handleEvent}
               chat={props.chat}
             />
@@ -86,11 +94,11 @@ export const ChatConteiner = (props: ChatConteinerProps) => {
           </div>
           <div className={styles.chat_conteiner__form}>
             <Form
-              updateMessagges={updateMessagges}
-              ws={props.ws}
+              //updateMessagges={updateMessagges}
+              //ws={props.ws}
               handleEvent={props.handleEvent}
               chat={props.chat}
-              setMessages={setMessages}
+              // setMessages={props.setMessages}
             />
           </div>
         </div>
@@ -99,7 +107,8 @@ export const ChatConteiner = (props: ChatConteinerProps) => {
           <>
             <PersonComponent
               chat={props.chat}
-              ws={props.ws}
+              handleEvent={props.handleEvent}
+              //ws={props.ws}
               user={props.user}
               setPerson={updatePerson}
             />

@@ -54,7 +54,7 @@ const checkTokenValidity = async (
 const App = () => {
   const [user, setUser] = useState<User | null>(null);
   const [chats, setChats] = useState<Chat[]>([]);
-
+  const [messages, setMessages] = useState<Message[]>([]);
   const [contacts, setContacts] = useState<ContactType[]>([]);
   const [loading, setIsLoading] = useState<boolean>(false);
   const ws = new WebSocket(Endpoints.ws);
@@ -123,7 +123,7 @@ const App = () => {
         ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
           const messages = data.messages as Message[];
-          //  setMessages(messages);
+          setMessages(messages);
           console.log(messages);
         };
         return;
@@ -139,9 +139,19 @@ const App = () => {
         ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
           const messages = data.messages as Message[];
-          //  setMessages(messages);
+          setMessages(messages);
           console.log(messages);
         };
+        return;
+      case 'add user to group':
+        ws.send(
+          JSON.stringify({
+            clientID: localStorage.getItem('token'),
+            type: 'add user to group',
+            chatID: data.chatId,
+            content: data.content,
+          }),
+        );
         return;
       default:
         console.log('Неизвестный статус - ', data.status);
@@ -154,6 +164,10 @@ const App = () => {
 
   const updateChats = (c: Chat[]) => {
     setChats(c);
+  };
+
+  const updateMessagges = (c: Message[]) => {
+    setMessages(c);
   };
 
   useEffect(() => {
@@ -183,7 +197,8 @@ const App = () => {
                 handleEvent={handleEvent}
                 contacts={contacts}
                 chats={chats}
-                // messages={messages}
+                messages={messages}
+                updateMessagges={updateMessagges}
               />
             }
           />

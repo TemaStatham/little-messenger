@@ -72,9 +72,14 @@
 }
 
 .buttons__paper_clip {
-  background-image: url('../../../../assets/chat/paper-clip.svg');
+  background-image: url('../../../../assets/chat/menu-dots-vertical.svg');
 }
 
 .buttons__dots {
   background-image: url('../../../../assets/chat/menu-dots-vertical.svg');
+}
+
+.profile_input {
+  width: 0;
+  height: 0;
 }
