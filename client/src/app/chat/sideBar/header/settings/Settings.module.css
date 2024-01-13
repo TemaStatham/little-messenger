@@ -15,7 +15,7 @@
 
   opacity: 0; /* Начальная непрозрачность */
   transform: scale(0.8); /* Начальный масштаб */
-
+  border: 0.5px solid #0000001c;
   animation: fadeInUp 0.3s ease-out forwards;
 }
 
