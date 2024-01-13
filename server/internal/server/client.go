@@ -94,9 +94,9 @@ func (c *Client) recognizeMessage(message []byte) {
 			log.Printf("%v\n", err)
 			return
 		}
-		
+
 		jsonData, err := json.Marshal(map[string]interface{}{
-			"status": "auth",
+			"status":        "auth",
 			"user":          user,
 			"chats":         chats,
 			"conversations": conversations,
@@ -129,16 +129,16 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		jsonData, err := json.Marshal(map[string]interface{}{
-			"status": "send",
-			"id": uintValue,
+			"status":   "send",
+			"id":       uintValue,
 			"messages": messages,
 		})
 		mess := ChatBroadcastMessage{
 			ClientsIDs: ids,
-			Content: jsonData,
+			Content:    jsonData,
 		}
 		c.hub.chatBroadcast <- mess
-		
+
 		// if err != nil {
 		// 	log.Println("ошибка при маршалинге в JSON: ", err)
 		// 	return
@@ -167,7 +167,7 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		jsonData, err := json.Marshal(map[string]interface{}{
-			"status": "create chat",
+			"status":        "create chat",
 			"user":          user,
 			"chats":         chats,
 			"conversations": conversations,
@@ -200,7 +200,7 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		jsonData, err := json.Marshal(map[string]interface{}{
-			"status": "get users",
+			"status":        "get users",
 			"user":          user,
 			"users":         users,
 			"chats":         chats,
@@ -262,10 +262,10 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		jsonData, err := json.Marshal(map[string]interface{}{
-			"status": "get messages",
+			"status":   "get messages",
 			"messages": messages,
-			"users": users,
-			"id": uintValue,
+			"users":    users,
+			"id":       uintValue,
 		})
 		if err != nil {
 			log.Println("ошибка при маршалинге в JSON: ", err)
@@ -304,7 +304,7 @@ func (c *Client) recognizeMessage(message []byte) {
 		}
 		jsonData, err := json.Marshal(map[string]interface{}{
 			"status": "get participants",
-			"users": users,
+			"users":  users,
 		})
 		c.send <- jsonData
 		break

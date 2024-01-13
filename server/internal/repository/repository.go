@@ -35,6 +35,7 @@ type Chat interface {
 	GetChatMessages(chatID uint) ([]models.Message, error)
 	GetPubChatMembers(chatID uint) ([]models.Contact, error)
 	GetPubChatMembersIDs(chatID uint) ([]uint, error)
+	ChangeImgPubChat(chatID uint, img string) error
 }
 
 // Repository - структура, объединяющая различные репозитории для работы с данными.

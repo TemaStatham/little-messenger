@@ -57,3 +57,7 @@ func (c *ChatService) GetPubChatMembers(chatID uint) ([]models.Contact, error) {
 func (c *ChatService) GetPubChatMembersIDs(chatID uint) ([]uint, error) {
 	return c.repo.GetPubChatMembersIDs(chatID)
 }
+
+func (c *ChatService) ChangeImgPubChat(chatID uint, img string) error {
+	return c.repo.ChangeImgPubChat(chatID, img)
+}

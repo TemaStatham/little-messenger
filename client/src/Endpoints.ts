@@ -9,4 +9,5 @@ export const Endpoints = {
   ws: `ws://${apiURL}/ws`,
   upload: `http://${apiURL}/api/upload`,
   static: `http://${apiURL}`,
+  uplaodGroup: `http://${apiURL}/api/uploadGroup`,
 };

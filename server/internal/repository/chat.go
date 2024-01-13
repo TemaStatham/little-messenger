@@ -218,3 +218,19 @@ func (c *ChatPostgres) GetPubChatMembersIDs(chatID uint) ([]uint, error) {
 
 	return members, nil
 }
+
+func (c *ChatPostgres) ChangeImgPubChat(chatID uint, img string) error {
+	query := `
+		UPDATE public_chats
+		SET img = $1
+		WHERE id = $2
+	`
+	fmt.Println("asdasdasdasdasdasdasd\n\n\n\n\n\n")
+	_, err := c.db.Exec(query, img, chatID)
+	if err != nil {
+		return fmt.Errorf("error updating public chat image: %v", err)
+	}
+	
+	fmt.Println(2)
+	return nil
+}

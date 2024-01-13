@@ -3,7 +3,7 @@ import { Chat } from '../../../../../types/Chats';
 import { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { ContactType } from '../../../../../types/User';
 import { Data } from '../../../../../types/Data';
-//import { Endpoints } from '../../../../../Endpoints';
+import { Endpoints } from '../../../../../Endpoints';
 
 type ClipProps = {
   setClip: (s: boolean) => void;
@@ -16,16 +16,36 @@ export const ClipComponent = (props: ClipProps) => {
   const [imgURL, setImgURL] = useState<string>(props.chat.photo);
   const imgPicker = useRef<HTMLInputElement>(null);
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      // const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
       setImgURL(URL.createObjectURL(selectedFile));
       const formData = new FormData();
       if (selectedFile) {
         formData.append('file', selectedFile);
       } else {
         console.log('file is undefined');
+      }
+      formData.append('id', props.chat.chatID.toString());
+      try {
+        const response = await fetch(Endpoints.uplaodGroup, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (response.ok) {
+          const responseData = await response.json();
+          console.log(responseData);
+          setImgURL(responseData.filePath);
+        } else {
+          console.log('Ошибка при сохранении профиля', response);
+        }
+      } catch (error) {
+        console.log('Ошибка при выполнении запроса:', error);
       }
     }
   };
@@ -71,7 +91,7 @@ export const ClipComponent = (props: ClipProps) => {
         <div className={styles.conteiner}>
           {props.participants &&
             props.participants.map((p: ContactType) => (
-              <div className={styles.parcipant}>
+              <div key={p.id} className={styles.parcipant}>
                 <img
                   className={styles.parc_photo}
                   src={p.image}

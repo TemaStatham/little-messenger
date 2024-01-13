@@ -19,19 +19,18 @@ func NewHub() *Hub {
 }
 
 type ChatBroadcastMessage struct {
-	ClientsIDs []uint   `json:"clientID"`
-	Content  []byte `json:"content"`
+	ClientsIDs []uint `json:"clientID"`
+	Content    []byte `json:"content"`
 }
 
 func contains(slice []uint, element uint) bool {
-    for _, e := range slice {
-        if e == element {
-            return true
-        }
-    }
-    return false
+	for _, e := range slice {
+		if e == element {
+			return true
+		}
+	}
+	return false
 }
-
 
 func (h *Hub) Run() {
 	for {
@@ -54,7 +53,7 @@ func (h *Hub) Run() {
 			}
 		case message := <-h.chatBroadcast:
 			for client := range h.clients {
-				if !contains(message.ClientsIDs, client.clientID){
+				if !contains(message.ClientsIDs, client.clientID) {
 					continue
 				}
 				select {
@@ -63,7 +62,7 @@ func (h *Hub) Run() {
 					close(client.send)
 					delete(h.clients, client)
 				}
-				
+
 			}
 		}
 

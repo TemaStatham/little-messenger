@@ -43,6 +43,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		api.POST("", h.userIdentity)
 		api.POST("/upload", h.uploadFile)
 		api.OPTIONS("/upload", h.options)
+		api.POST("/uploadGroup", h.uploadFileGroup)
+		api.OPTIONS("/uploadGroup", h.options)
 	}
 
 	router.Static("/images", "./images")

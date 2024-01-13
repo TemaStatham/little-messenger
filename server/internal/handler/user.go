@@ -116,8 +116,11 @@ func (h *Handler) uploadFile(c *gin.Context) {
 		ImageURLs: fmt.Sprintf("http://localhost:8080/images/%s", fileName),
 	}
 
-	h.services.ChangeProfile(u)
-
+	err = h.services.ChangeProfile(u)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 	defer tempFile.Close()
 
 	// read all of the contents of our uploaded file into a

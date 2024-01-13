@@ -28,6 +28,7 @@ type Chat interface {
 	GetChatMessages(chatID uint) ([]models.Message, error)
 	GetPubChatMembers(chatID uint) ([]models.Contact, error)
 	GetPubChatMembersIDs(chatID uint) ([]uint, error)
+	ChangeImgPubChat(chatID uint, img string) error
 }
 
 // Service представляет основной уровень сервиса, объединяющий сервисы User, Chat и WebSocket.
