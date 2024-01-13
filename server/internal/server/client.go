@@ -94,6 +94,7 @@ func (c *Client) recognizeMessage(message []byte) {
 			log.Printf("%v\n", err)
 			return
 		}
+		
 		jsonData, err := json.Marshal(map[string]interface{}{
 			"user":          user,
 			"chats":         chats,
@@ -111,7 +112,7 @@ func (c *Client) recognizeMessage(message []byte) {
 			log.Println(err)
 			return
 		}
-		c.services.SendMessage(parsedMessage.Content, userID, uint(uintValue))
+		err = c.services.SendMessage(parsedMessage.Content, userID, uint(uintValue))
 		if err != nil {
 			log.Println(err)
 			return
@@ -121,7 +122,7 @@ func (c *Client) recognizeMessage(message []byte) {
 			log.Println(err)
 			return
 		}
-		users, err := c.services.GetPubChatMembersIDs(uint(uintValue))
+		ids, err := c.services.GetPubChatMembersIDs(uint(uintValue))
 		if err != nil {
 			log.Println(err)
 			return
@@ -130,7 +131,7 @@ func (c *Client) recognizeMessage(message []byte) {
 			"messages": messages,
 		})
 		mess := ChatBroadcastMessage{
-			ClientsIDs: users,
+			ClientsIDs: ids,
 			Content: jsonData,
 		}
 		c.hub.chatBroadcast <- mess
@@ -250,9 +251,14 @@ func (c *Client) recognizeMessage(message []byte) {
 			log.Println(err)
 			return
 		}
-		
+		users, err := c.services.GetPubChatMembers(uint(uintValue))
+		if err != nil {
+			log.Println(err)
+			return
+		}
 		jsonData, err := json.Marshal(map[string]interface{}{
 			"messages": messages,
+			"users": users,
 		})
 		if err != nil {
 			log.Println("ошибка при маршалинге в JSON: ", err)
@@ -277,6 +283,22 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 
+		break
+	case "get participants":
+		uintValue, err := strconv.ParseUint(parsedMessage.ChatID, 10, 32)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		users, err := c.services.GetPubChatMembers(uint(uintValue))
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		jsonData, err := json.Marshal(map[string]interface{}{
+			"users": users,
+		})
+		c.send <- jsonData
 		break
 	default:
 		log.Printf("unknown message type: %s", parsedMessage.ClientID)

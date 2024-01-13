@@ -27,9 +27,9 @@
   top: 0;
   left: 200px;
   right: 0;
-  margin: 5px auto 5px 90%;
+  margin: 5px 10% 5px auto;
 
-  background-color: rgba(104, 255, 255, 0.644);
+  background-color: rgba(135, 255, 255, 0.329);
   border-radius: 10px;
 
   float: left;
@@ -49,9 +49,9 @@
   top: 0;
   left: 0;
   right: 200px;
-  margin: 5px 70% 5px auto;
+  margin: 5px auto 5px 20%;
 
-  background-color: rgba(224, 224, 224, 0.671);
+  background-color: rgba(224, 224, 224, 0.418);
   border-radius: 10px;
 
   float: right;

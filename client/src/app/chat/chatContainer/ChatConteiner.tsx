@@ -9,6 +9,7 @@ import { Data } from '../../../types/Data';
 import { useEffect, useState } from 'react';
 import { ClipComponent } from './popups/clip/Clip';
 import { PersonComponent } from './popups/person/Person';
+import { ContactType } from '../../../types/User';
 
 type ChatConteinerProps = {
   user: User;
@@ -17,6 +18,7 @@ type ChatConteinerProps = {
   //setMessages: (c: Message[]) => void;
   handleEvent: (data: Data) => void;
   //ws: WebSocket;
+  participants: ContactType[];
 };
 
 export const ChatConteiner = (props: ChatConteinerProps) => {
@@ -106,6 +108,7 @@ export const ChatConteiner = (props: ChatConteinerProps) => {
         {person ? (
           <>
             <PersonComponent
+              participants={props.participants}
               chat={props.chat}
               handleEvent={props.handleEvent}
               //ws={props.ws}
@@ -118,7 +121,12 @@ export const ChatConteiner = (props: ChatConteinerProps) => {
         )}
         {clip ? (
           <>
-            <ClipComponent setClip={updateClip} />
+            <ClipComponent
+              handleEvent={props.handleEvent}
+              participants={props.participants}
+              chat={props.chat}
+              setClip={updateClip}
+            />
           </>
         ) : (
           <></>

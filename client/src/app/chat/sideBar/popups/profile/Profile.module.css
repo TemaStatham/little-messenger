@@ -51,6 +51,7 @@
   height: 200px;
   background-color: blanchedalmond;
   margin: 15px 10px 10px 10px;
+  border: 0.5px solid #000;
 }
 
 .profile_input {

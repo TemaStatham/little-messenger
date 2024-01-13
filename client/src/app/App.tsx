@@ -55,6 +55,7 @@ const App = () => {
   const [user, setUser] = useState<User | null>(null);
   const [chats, setChats] = useState<Chat[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [participants, setParticipants] = useState<ContactType[]>([]);
   const [contacts, setContacts] = useState<ContactType[]>([]);
   const [loading, setIsLoading] = useState<boolean>(false);
   const ws = new WebSocket(Endpoints.ws);
@@ -153,6 +154,22 @@ const App = () => {
           }),
         );
         return;
+      case 'get participants':
+        ws.send(
+          JSON.stringify({
+            clientID: localStorage.getItem('token'),
+            type: 'get participants',
+            chatID: data.chatId,
+            content: data.content,
+          }),
+        );
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          const messages = data.users as ContactType[];
+          setParticipants(messages);
+          console.log(messages);
+        };
+        return;
       default:
         console.log('Неизвестный статус - ', data.status);
     }
@@ -166,9 +183,9 @@ const App = () => {
     setChats(c);
   };
 
-  const updateMessagges = (c: Message[]) => {
-    setMessages(c);
-  };
+  // const updateMessagges = (c: Message[]) => {
+  //   setMessages(c);
+  // };
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -193,12 +210,13 @@ const App = () => {
             element={
               <ChatApp
                 user={user}
-                ws={ws}
+                //ws={ws}
                 handleEvent={handleEvent}
                 contacts={contacts}
                 chats={chats}
                 messages={messages}
-                updateMessagges={updateMessagges}
+                //updateMessagges={updateMessagges}
+                participants={participants}
               />
             }
           />

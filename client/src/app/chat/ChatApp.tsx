@@ -12,9 +12,10 @@ type ChatComponentProps = {
   handleEvent: (data: Data) => void;
   contacts: ContactType[];
   chats: Chat[];
-  ws: WebSocket;
+  participants: ContactType[];
+  //ws: WebSocket;
   messages: Message[];
-  updateMessagges: (c: Message[]) => void;
+  //updateMessagges: (c: Message[]) => void;
 };
 
 export const ChatApp = (props: ChatComponentProps) => {
@@ -34,6 +35,7 @@ export const ChatApp = (props: ChatComponentProps) => {
       />
       {contact ? (
         <ChatConteiner
+          participants={props.participants}
           // ws={props.ws}
           messages={props.messages}
           // setMessages={props.updateMessagges}

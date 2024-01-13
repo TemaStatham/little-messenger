@@ -2,6 +2,8 @@ import styles from './Person.module.css';
 import { User } from '../../../../../types/User';
 import { Chat } from '../../../../../types/Chats';
 import { Data } from '../../../../../types/Data';
+import { useEffect } from 'react';
+import { ContactType } from '../../../../../types/User';
 
 type PersonProps = {
   setPerson: (s: boolean) => void;
@@ -9,9 +11,28 @@ type PersonProps = {
   //ws: WebSocket;
   chat: Chat;
   handleEvent: (data: Data) => void;
+  participants: ContactType[];
 };
 
+const contains = (people: ContactType[], targetId: string): boolean => {
+  for (const person of people) {
+    if (person.id == targetId) {
+      return true;
+    }
+  }
+  return false;
+};
 export const PersonComponent = (props: PersonProps) => {
+  useEffect(() => {
+    props.handleEvent({
+      status: 'get participants',
+      token: '',
+      clientID: '',
+      content: '',
+      chatId: `${props.chat?.chatID}`,
+    });
+  }, []);
+
   return (
     <>
       <div
@@ -26,6 +47,10 @@ export const PersonComponent = (props: PersonProps) => {
             key={contact.id}
             className={styles.contact}
             onClick={() => {
+              if (contains(props.participants, contact.id)) {
+                alert('Этот пользователь уже состоит в этой группе ');
+                return;
+              }
               props.handleEvent({
                 status: 'add user to group',
                 token: '',
