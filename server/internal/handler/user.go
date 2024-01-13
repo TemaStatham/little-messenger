@@ -86,20 +86,18 @@ func (h *Handler) uploadFile(c *gin.Context) {
 		return
 	}
 	defer file.Close()
-	
+
 	id := c.PostForm("id")
-    username := c.PostForm("username")
-    email := c.PostForm("email")
-    firstName := c.PostForm("firstName")
-    lastName := c.PostForm("lastName")
-    
+	username := c.PostForm("username")
+	email := c.PostForm("email")
+	firstName := c.PostForm("firstName")
+	lastName := c.PostForm("lastName")
+
 	uintValue, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
 		fmt.Println("Ошибка при преобразовании строки в uint:", err)
 		return
 	}
-
-	
 
 	// Create a temporary file within our temp-images directory that follows
 	// a particular naming pattern
@@ -110,11 +108,11 @@ func (h *Handler) uploadFile(c *gin.Context) {
 	}
 	_, fileName := filepath.Split(tempFile.Name())
 	u := models.User{
-		ID: uint(uintValue), 
-		Username: username, 
-		Email:email, 
-		FirstName:firstName, 
-		LastName:lastName, 
+		ID:        uint(uintValue),
+		Username:  username,
+		Email:     email,
+		FirstName: firstName,
+		LastName:  lastName,
 		ImageURLs: fmt.Sprintf("http://localhost:8080/images/%s", fileName),
 	}
 

@@ -37,7 +37,7 @@ func NewUserService(repo repository.User) *UserService {
 // CreateUser создает нового пользователя и возвращает идентификатор пользователя.
 func (a *UserService) CreateUser(user *models.User) (uint, error) {
 	user.Password = generatePasswordHash(user.Password)
-	
+
 	id, err := a.repo.CreateUser(user)
 	if err != nil {
 		return 0, nil
@@ -47,7 +47,7 @@ func (a *UserService) CreateUser(user *models.User) (uint, error) {
 	if err != nil {
 		return 0, nil
 	}
-	
+
 	return id, nil
 }
 

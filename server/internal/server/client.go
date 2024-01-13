@@ -121,14 +121,25 @@ func (c *Client) recognizeMessage(message []byte) {
 			log.Println(err)
 			return
 		}
+		users, err := c.services.GetPubChatMembersIDs(uint(uintValue))
+		if err != nil {
+			log.Println(err)
+			return
+		}
 		jsonData, err := json.Marshal(map[string]interface{}{
 			"messages": messages,
 		})
-		if err != nil {
-			log.Println("ошибка при маршалинге в JSON: ", err)
-			return
+		mess := ChatBroadcastMessage{
+			ClientsIDs: users,
+			Content: jsonData,
 		}
-		c.send <- jsonData
+		c.hub.chatBroadcast <- mess
+		
+		// if err != nil {
+		// 	log.Println("ошибка при маршалинге в JSON: ", err)
+		// 	return
+		// }
+		// c.send <- jsonData
 		break
 	case "create chat":
 		user, err := c.services.GetUserByID(c.clientID)
@@ -239,6 +250,7 @@ func (c *Client) recognizeMessage(message []byte) {
 			log.Println(err)
 			return
 		}
+		
 		jsonData, err := json.Marshal(map[string]interface{}{
 			"messages": messages,
 		})
@@ -248,44 +260,24 @@ func (c *Client) recognizeMessage(message []byte) {
 		}
 		c.send <- jsonData
 		break
-	// case "change profile":
-	// 	var u models.User
-	// 	if err := json.Unmarshal([]byte(parsedMessage.Content), &u); err != nil {
-	// 		log.Printf("error unmarshalling JSON: %v\n", err)
-	// 		return
-	// 	}
-	// 	fmt.Print("1\n")
-	// 	if err := c.services.ChangeProfile(u); err != nil {
-	// 		log.Println(err)
-	// 		return
-	// 	}
-	// 	fmt.Print("2\n")
-	// 	user, err := c.services.GetUserByID(c.clientID)
-	// 	if err != nil {
-	// 		log.Printf("%v\n", err)
-	// 		return
-	// 	}
-	// 	fmt.Print("3\n")
-	// 	chats, err := c.services.GetChatsByUserID(userID)
-	// 	if err != nil {
-	// 		log.Printf("%v\n", err)
-	// 		return
-	// 	}
-	// 	fmt.Print("4\n")
-	// 	conversations, err := c.services.GetConversationsByUserID(userID)
-	// 	if err != nil {
-	// 		log.Printf("%v\n", err)
-	// 		return
-	// 	}
-	// 	fmt.Print("5\n")
-	// 	jsonData, err := json.Marshal(map[string]interface{}{
-	// 		"status":        "contact create success",
-	// 		"user":          user,
-	// 		"chats":         chats,
-	// 		"conversations": conversations,
-	// 	})
-	// 	c.send <- jsonData
-	// 	break
+	case "add user to group":
+		uintValue, err := strconv.ParseUint(parsedMessage.ChatID, 10, 32)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		uintValue2, err := strconv.ParseUint(parsedMessage.Content, 10, 32)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		c.services.CreateChatMember(uint(uintValue2), uint(uintValue))
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		break
 	default:
 		log.Printf("unknown message type: %s", parsedMessage.ClientID)
 		break

@@ -1,7 +1,12 @@
 import styles from './Person.module.css';
+import { User } from '../../../../../types/User';
+import { Chat } from '../../../../../types/Chats';
 
 type PersonProps = {
   setPerson: (s: boolean) => void;
+  user: User;
+  ws: WebSocket;
+  chat: Chat;
 };
 
 export const PersonComponent = (props: PersonProps) => {
@@ -13,7 +18,38 @@ export const PersonComponent = (props: PersonProps) => {
           props.setPerson(false);
         }}
       ></div>
-      <div className={styles.person}></div>
+      <div className={styles.person}>
+        {props.user.contacts.map((contact) => (
+          <div
+            key={contact.id}
+            className={styles.contact}
+            onClick={() => {
+              props.ws.send(
+                JSON.stringify({
+                  clientID: localStorage.getItem('token'),
+                  type: 'add user to group',
+                  chatID: `${props.chat?.chatID}`,
+                  content: `${contact.id}`,
+                }),
+              );
+              props.ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                console.log(data);
+              };
+              setTimeout(() => {
+                props.setPerson(false);
+              }, 500);
+            }}
+          >
+            <img width={50} src={contact.image} className={styles.photo}></img>
+            <div className={styles.name}>
+              {contact.username}
+              <div> {contact.firstName}</div>
+              <div> {contact.lastName}</div>
+            </div>
+          </div>
+        ))}
+      </div>
     </>
   );
 };

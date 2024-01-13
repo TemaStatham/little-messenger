@@ -116,8 +116,8 @@ func (c *ChatPostgres) GetUserPublicChats(userID uint) ([]models.Conversation, e
 	query := `
         SELECT pc.chat_id as chat_id, pc.name as name, pc.creation_date as creation_date, pc.creator_user_id as creator_user_id, pc.img as img
         FROM public_chats pc
-        JOIN users u ON pc.creator_user_id = u.id
-        WHERE u.id = $1
+		JOIN chat_members cm ON cm.chat_id = pc.chat_id
+        WHERE cm.user_id = $1
     `
 
 	var userPublicChats []models.Conversation
@@ -154,13 +154,8 @@ func (c *ChatPostgres) GetChatMessages(chatID uint) ([]models.Message, error) {
         FROM messages m
 		JOIN users u ON u.id = m.user_id 
         WHERE m.chat_id = $1
+		ORDER BY m.id
     `
-
-	// SELECT m.id, m.user_id, u.username as username, up.path as photo, m.content as content, m.send_time as send_time
-	//     FROM messages m
-	// 	JOIN users u ON u.id = m.user_id
-	// 	JOIN user_photos up ON up.user_id = u.id
-	//     WHERE m.chat_id = $1
 
 	var messages []models.Message
 	if err := c.db.Select(&messages, query, chatID); err != nil {
@@ -168,4 +163,58 @@ func (c *ChatPostgres) GetChatMessages(chatID uint) ([]models.Message, error) {
 	}
 
 	return messages, nil
+}
+
+// GetPubChatMembers изъять участников беседы
+func (c *ChatPostgres) GetPubChatMembers(chatID uint) ([]models.Contact, error) {
+	query := `
+        SELECT u.id, u.username, u.email, u.first_name, u.last_name, up.path as image
+        FROM public_chats pc
+		JOIN chat_members cm ON cm.chat_id = pc.id
+		JOIN users u ON u.id = cm.user_id 
+		JOIN
+			(
+				SELECT
+					user_id,
+					path,
+					ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY id DESC) AS row_num
+				FROM
+					user_photos
+			) AS up ON u.id = up.user_id AND up.row_num = 1
+        WHERE pc.id = $1
+    `
+
+	var members []models.Contact
+	if err := c.db.Select(&members, query, chatID); err != nil {
+		return nil, fmt.Errorf("error getting public chat members: %v", err)
+	}
+
+	return members, nil
+
+}
+
+func (c *ChatPostgres) GetPubChatMembersIDs(chatID uint) ([]uint, error) {
+	query := `
+        SELECT u.id
+        FROM public_chats pc
+		JOIN chat_members cm ON cm.chat_id = pc.id
+		JOIN users u ON u.id = cm.user_id 
+		JOIN
+			(
+				SELECT
+					user_id,
+					path,
+					ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY id DESC) AS row_num
+				FROM
+					user_photos
+			) AS up ON u.id = up.user_id AND up.row_num = 1
+        WHERE pc.id = $1
+    `
+
+	var members []uint
+	if err := c.db.Select(&members, query, chatID); err != nil {
+		return nil, fmt.Errorf("error getting public chat members: %v", err)
+	}
+
+	return members, nil
 }

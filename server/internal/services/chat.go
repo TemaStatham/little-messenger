@@ -49,3 +49,11 @@ func (c *ChatService) GetChatMessages(chatID uint) ([]models.Message, error) {
 func (c *ChatService) SendMessage(content string, userID, chatID uint) error {
 	return c.repo.CreateMessage(content, userID, chatID)
 }
+
+func (c *ChatService) GetPubChatMembers(chatID uint) ([]models.Contact, error) {
+	return c.repo.GetPubChatMembers(chatID)
+}
+
+func (c *ChatService) GetPubChatMembersIDs(chatID uint) ([]uint, error) {
+	return c.repo.GetPubChatMembersIDs(chatID)
+}

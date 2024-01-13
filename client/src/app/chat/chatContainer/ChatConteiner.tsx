@@ -20,6 +20,7 @@ type ChatConteinerProps = {
 
 export const ChatConteiner = (props: ChatConteinerProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
+  console.log(messages);
   useEffect(() => {
     props.ws.onopen = () => {
       props.ws.send(
@@ -96,7 +97,12 @@ export const ChatConteiner = (props: ChatConteinerProps) => {
         {search ? <></> : <></>}
         {person ? (
           <>
-            <PersonComponent setPerson={updatePerson} />
+            <PersonComponent
+              chat={props.chat}
+              ws={props.ws}
+              user={props.user}
+              setPerson={updatePerson}
+            />
           </>
         ) : (
           <></>

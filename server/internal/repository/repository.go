@@ -33,6 +33,8 @@ type Chat interface {
 	GetUserPublicChats(userID uint) ([]models.Conversation, error)
 	GetUserPrivateChats(userID uint) ([]models.Chat, error)
 	GetChatMessages(chatID uint) ([]models.Message, error)
+	GetPubChatMembers(chatID uint) ([]models.Contact, error)
+	GetPubChatMembersIDs(chatID uint) ([]uint, error)
 }
 
 // Repository - структура, объединяющая различные репозитории для работы с данными.

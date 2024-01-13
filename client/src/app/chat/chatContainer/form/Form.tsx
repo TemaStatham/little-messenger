@@ -21,7 +21,8 @@ export const Form = (props: FormProps) => {
 
   const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      if (inputValue) {
+      event.preventDefault();
+      if (inputValue && inputValue.length < 255) {
         // props.handleEvent({
         //   status: 'send',
         //   token: '',
@@ -29,7 +30,6 @@ export const Form = (props: FormProps) => {
         //   content: inputValue,
         //   chatId: `${props.chat?.chatID}`,
         // });
-        event.preventDefault();
         props.ws.send(
           JSON.stringify({
             clientID: localStorage.getItem('token'),
