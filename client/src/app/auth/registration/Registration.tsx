@@ -48,7 +48,7 @@ export const Registration = (props: RegistrationProps) => {
   const [lname, setLName] = useState('');
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
-  const [confirmPass, setConfirmPass] = useState('');
+  //const [confirmPass, setConfirmPass] = useState('');
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [pressed, setPressed] = useState(false);
 
@@ -103,13 +103,6 @@ export const Registration = (props: RegistrationProps) => {
       type: 'password',
       value: pass,
       setName: setPass,
-      placeholder: 'password',
-    },
-    {
-      tittle: 'Подтвердите пароль',
-      type: 'password',
-      value: confirmPass,
-      setName: setConfirmPass,
       placeholder: 'password',
     },
   ];

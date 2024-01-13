@@ -44,12 +44,7 @@ export const ChatApp = (props: ChatComponentProps) => {
             content: data.chatId,
           }),
         );
-        // props.ws.onmessage = (event) => {
-        //   console.log(event.data);
-        //   const data = JSON.parse(event.data);
-        //   if (data.user) props.updateUser(data.user);
-        //   if (data.conversations) props.updateChats(data.conversations);
-        // };
+
         break;
       case 'create contact':
         props.ws.send(
@@ -60,12 +55,7 @@ export const ChatApp = (props: ChatComponentProps) => {
             content: `${data.content}`,
           }),
         );
-        // props.ws.onmessage = (event) => {
-        //   console.log(event.data);
-        //   const data = JSON.parse(event.data);
-        //   const user = data.user as User;
-        //   props.updateUser(user);
-        // };
+
         return;
       case 'reset contacts':
         props.updateContacts([]);
@@ -79,11 +69,7 @@ export const ChatApp = (props: ChatComponentProps) => {
             content: '',
           }),
         );
-        // props.ws.onmessage = (event) => {
-        //   const data = JSON.parse(event.data);
-        //   const users = data.users as ContactType[];
-        //   props.updateContacts(users);
-        // };
+
         break;
       case 'get messages':
         props.ws.send(
@@ -94,13 +80,7 @@ export const ChatApp = (props: ChatComponentProps) => {
             content: '',
           }),
         );
-        // props.ws.onmessage = (event) => {
-        //   const data = JSON.parse(event.data);
-        //   // const id = data.id as number;
 
-        //   const messages = data.messages as Message[];
-        //   props.updateMessagges(messages);
-        // };
         break;
       case 'send':
         props.ws.send(
@@ -111,13 +91,6 @@ export const ChatApp = (props: ChatComponentProps) => {
             content: data.content,
           }),
         );
-
-        // props.ws.onmessage = (event) => {
-        //   const data = JSON.parse(event.data);
-        //   const messages = data.messages as Message[];
-
-        //   props.updateMessagges(messages);
-        // };
         break;
       case 'add user to group':
         props.ws.send(
@@ -138,11 +111,6 @@ export const ChatApp = (props: ChatComponentProps) => {
             content: data.content,
           }),
         );
-        // props.ws.onmessage = (event) => {
-        //   const data = JSON.parse(event.data);
-        //   const messages = data.users as ContactType[];
-        //   props.updateParticipants(messages);
-        // };
         break;
       default:
         console.log('Неизвестный статус - ', data.status);
@@ -152,13 +120,18 @@ export const ChatApp = (props: ChatComponentProps) => {
   useEffect(() => {
     props.ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log(data.status);
+
+      console.log(data.status, chat);
       if (data.status)
         switch (data.status) {
           // case 'auth':
           //   break;
           case 'send':
-            if (data.id && (data.id as number) != chat?.chatID) break;
+            console.log(data.id, chat?.chatID);
+            if (data.id && (data.id as number) != chat?.chatID) {
+              console.log(1);
+              break;
+            }
             if (data.messages) props.updateMessagges(data.messages);
             break;
           case 'create chat':
@@ -173,9 +146,8 @@ export const ChatApp = (props: ChatComponentProps) => {
             break;
           case 'get messages':
             //if (data.id && (data.id as number) != chat?.chatID) break;
-
             props.updateMessagges(data.messages);
-            console.log('get mess');
+
             break;
           case 'add user to group':
             break;
@@ -186,7 +158,7 @@ export const ChatApp = (props: ChatComponentProps) => {
             console.log('i dont know data status', data.status);
         }
     };
-  }, [props.ws]);
+  }, [props.ws, chat]);
 
   return (
     <div className={styles.chat_background}>

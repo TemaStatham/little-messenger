@@ -17,6 +17,7 @@ export const ChatComponent = (props: ChatComponentProps) => {
         onClick={() => {
           props.handleChat(props.chat);
           const token = localStorage.getItem('token');
+
           if (token) {
             props.handleEvent({
               status: 'get messages',
