@@ -96,6 +96,7 @@ func (c *Client) recognizeMessage(message []byte) {
 		}
 		
 		jsonData, err := json.Marshal(map[string]interface{}{
+			"status": "auth",
 			"user":          user,
 			"chats":         chats,
 			"conversations": conversations,
@@ -128,6 +129,8 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		jsonData, err := json.Marshal(map[string]interface{}{
+			"status": "send",
+			"id": uintValue,
 			"messages": messages,
 		})
 		mess := ChatBroadcastMessage{
@@ -164,6 +167,7 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		jsonData, err := json.Marshal(map[string]interface{}{
+			"status": "create chat",
 			"user":          user,
 			"chats":         chats,
 			"conversations": conversations,
@@ -196,6 +200,7 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		jsonData, err := json.Marshal(map[string]interface{}{
+			"status": "get users",
 			"user":          user,
 			"users":         users,
 			"chats":         chats,
@@ -229,7 +234,7 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		jsonData, err := json.Marshal(map[string]interface{}{
-			"status":        "contact create success",
+			"status":        "create contact",
 			"user":          user,
 			"chats":         chats,
 			"conversations": conversations,
@@ -257,8 +262,10 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		jsonData, err := json.Marshal(map[string]interface{}{
+			"status": "get messages",
 			"messages": messages,
 			"users": users,
+			"id": uintValue,
 		})
 		if err != nil {
 			log.Println("ошибка при маршалинге в JSON: ", err)
@@ -296,6 +303,7 @@ func (c *Client) recognizeMessage(message []byte) {
 			return
 		}
 		jsonData, err := json.Marshal(map[string]interface{}{
+			"status": "get participants",
 			"users": users,
 		})
 		c.send <- jsonData

@@ -9,7 +9,6 @@ type ChatComponentProps = {
 };
 
 export const ChatComponent = (props: ChatComponentProps) => {
-  console.log(props.chat);
   return (
     <>
       <div

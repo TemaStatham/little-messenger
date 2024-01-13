@@ -3,13 +3,13 @@ import { Auth } from './auth/Auth';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Endpoints } from '../Endpoints';
 import { ContactType, User } from '../types/User';
-import { Data } from '../types/Data';
+//import { Data } from '../types/Data';
 import { useState, useEffect } from 'react';
 import { Chat, Message } from '../types/Chats';
 
 const checkTokenValidity = async (
   ws: WebSocket,
-  setUser: (u: User | null) => void,
+  setUser: (u: User) => void,
   setChats: (c: Chat[]) => void,
 ) => {
   const token = localStorage.getItem('token');
@@ -54,128 +54,14 @@ const checkTokenValidity = async (
 const App = () => {
   const [user, setUser] = useState<User | null>(null);
   const [chats, setChats] = useState<Chat[]>([]);
+  // const [chat, setChat] = useState<Chat | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [participants, setParticipants] = useState<ContactType[]>([]);
   const [contacts, setContacts] = useState<ContactType[]>([]);
   const [loading, setIsLoading] = useState<boolean>(false);
   const ws = new WebSocket(Endpoints.ws);
 
-  const handleEvent = (data: Data) => {
-    switch (data.status) {
-      case 'create chat':
-        ws.send(
-          JSON.stringify({
-            clientID: localStorage.getItem('token'),
-            type: 'create chat',
-            chatID: data.chatId,
-            content: data.chatId,
-          }),
-        );
-        ws.onmessage = (event) => {
-          console.log(event.data);
-          const data = JSON.parse(event.data);
-          if (data.user) setUser(data.user);
-          if (data.conversations) setChats(data.conversations);
-        };
-        return;
-      case 'create contact':
-        ws.send(
-          JSON.stringify({
-            clientID: localStorage.getItem('token'),
-            type: 'create contact',
-            chatID: '',
-            content: `${data.content}`,
-          }),
-        );
-        ws.onmessage = (event) => {
-          console.log(event.data);
-          const data = JSON.parse(event.data);
-          const user = data.user as User;
-          setUser(user);
-        };
-        return;
-      case 'reset contacts':
-        setContacts([]);
-        return;
-      case 'get users':
-        ws.send(
-          JSON.stringify({
-            clientID: localStorage.getItem('token'),
-            type: 'get users',
-            chatID: '',
-            content: '',
-          }),
-        );
-        ws.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          const users = data.users as ContactType[];
-          setContacts(users);
-        };
-        return;
-      case 'get messages':
-        ws.send(
-          JSON.stringify({
-            clientID: localStorage.getItem('token'),
-            type: 'get messages',
-            chatID: data.chatId,
-            content: '',
-          }),
-        );
-        ws.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          const messages = data.messages as Message[];
-          setMessages(messages);
-          console.log(messages);
-        };
-        return;
-      case 'send':
-        ws.send(
-          JSON.stringify({
-            clientID: localStorage.getItem('token'),
-            type: 'send',
-            chatID: data.chatId,
-            content: data.content,
-          }),
-        );
-        ws.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          const messages = data.messages as Message[];
-          setMessages(messages);
-          console.log(messages);
-        };
-        return;
-      case 'add user to group':
-        ws.send(
-          JSON.stringify({
-            clientID: localStorage.getItem('token'),
-            type: 'add user to group',
-            chatID: data.chatId,
-            content: data.content,
-          }),
-        );
-        return;
-      case 'get participants':
-        ws.send(
-          JSON.stringify({
-            clientID: localStorage.getItem('token'),
-            type: 'get participants',
-            chatID: data.chatId,
-            content: data.content,
-          }),
-        );
-        ws.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          const messages = data.users as ContactType[];
-          setParticipants(messages);
-          console.log(messages);
-        };
-        return;
-      default:
-        console.log('Неизвестный статус - ', data.status);
-    }
-  };
-
-  const updateUser = (u: User | null) => {
+  const updateUser = (u: User) => {
     setUser(u);
   };
 
@@ -183,13 +69,38 @@ const App = () => {
     setChats(c);
   };
 
+  const updateMessagges = (c: Message[]) => {
+    setMessages(c);
+  };
+
+  const updateParticipants = (p: ContactType[]) => {
+    setParticipants(p);
+  };
+
+  const updateContacts = (c: ContactType[]) => {
+    setContacts(c);
+  };
+
+  // const updateChat = (c: Chat) => {
+  //   setChat(c);
+  // };
+
   // const updateMessagges = (c: Message[]) => {
   //   setMessages(c);
   // };
 
-  useEffect(() => {
-    console.log(chats, 12312);
-  }, [chats]);
+  // useEffect(() => {
+  //   console.log(1);
+  // }, [chats, chat, messages]);
+
+  // useEffect(() => {
+  //   ws.onmessage = (event) => {
+  //     const data = JSON.parse(event.data);
+  //     //const id = data.id as number;c
+  //     const messages = data.messages as Message[];
+  //     setMessages(messages);
+  //   };
+  // }, [ws]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -214,13 +125,21 @@ const App = () => {
             element={
               <ChatApp
                 user={user}
+                ws={ws}
+                //updateChat={updateChat}
+                //chat={chat}
                 //ws={ws}
-                handleEvent={handleEvent}
+                //handleEvent={handleEvent}
                 contacts={contacts}
                 chats={chats}
                 messages={messages}
                 //updateMessagges={updateMessagges}
                 participants={participants}
+                updateChats={updateChats}
+                updateMessagges={updateMessagges}
+                updateUser={updateUser}
+                updateParticipants={updateParticipants}
+                updateContacts={updateContacts}
               />
             }
           />

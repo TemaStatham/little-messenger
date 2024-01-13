@@ -23,7 +23,7 @@ type ChatConteinerProps = {
 
 export const ChatConteiner = (props: ChatConteinerProps) => {
   // const [messages, setMessages] = useState<Message[]>([]);
-  console.log(props.messages);
+
   useEffect(() => {
     props.handleEvent({
       status: 'get messages',

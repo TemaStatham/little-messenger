@@ -34,7 +34,6 @@ export const CreateChatComponent = (props: CreateChatComponentProps) => {
         <div
           className={styles.confirm}
           onClick={() => {
-            location.reload();
             props.handleState(CounterState.Null);
             props.handleEvent({
               status: 'create chat',
@@ -43,6 +42,7 @@ export const CreateChatComponent = (props: CreateChatComponentProps) => {
               content: '',
               chatId: `${chatName}`,
             });
+            location.reload();
           }}
         >
           Подтвердить

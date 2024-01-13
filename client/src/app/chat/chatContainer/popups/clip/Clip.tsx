@@ -3,6 +3,7 @@ import { Chat } from '../../../../../types/Chats';
 import { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { ContactType } from '../../../../../types/User';
 import { Data } from '../../../../../types/Data';
+//import { Endpoints } from '../../../../../Endpoints';
 
 type ClipProps = {
   setClip: (s: boolean) => void;
@@ -18,7 +19,14 @@ export const ClipComponent = (props: ClipProps) => {
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
+      // const token = localStorage.getItem('token');
       setImgURL(URL.createObjectURL(selectedFile));
+      const formData = new FormData();
+      if (selectedFile) {
+        formData.append('file', selectedFile);
+      } else {
+        console.log('file is undefined');
+      }
     }
   };
 
