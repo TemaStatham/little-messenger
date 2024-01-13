@@ -1,5 +1,5 @@
 import styles from './SideBar.module.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChatsComponent } from './chats/Chats';
 import { HeaderComponent } from './header/Header';
 import { CounterState } from './States';
@@ -25,6 +25,22 @@ export const SideBar = (props: SideBarProps) => {
   const handleState = (state: CounterState) => {
     setState(state);
   };
+
+  const [chats, setChats] = useState<Chat[]>([]);
+
+  const [searchValue, setSearchValue] = useState('');
+
+  const updateSearchValue = (s: string) => {
+    setSearchValue(s);
+  };
+
+  useEffect(() => {
+    setChats(
+      props.chats.filter((chat) =>
+        chat.name.toLowerCase().includes(searchValue.toLowerCase()),
+      ),
+    );
+  }, [searchValue]);
 
   return (
     <div className={styles.side_bar}>
@@ -53,13 +69,17 @@ export const SideBar = (props: SideBarProps) => {
         />
       )}
       <div className={styles.side_bar__header}>
-        <HeaderComponent handleState={handleState} />
+        <HeaderComponent
+          updateSearchValue={updateSearchValue}
+          chats={props.chats}
+          handleState={handleState}
+        />
       </div>
       <div className={styles.side_bar__list}>
         <ChatsComponent
           handleEvent={props.handleEvent}
           handleChat={props.handleChat}
-          chats={props.chats}
+          chats={chats}
         />
       </div>
     </div>
